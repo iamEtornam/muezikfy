@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sample_data/sample_data.dart';
 
 class SongListTile extends StatefulWidget {
   final String songCover;
