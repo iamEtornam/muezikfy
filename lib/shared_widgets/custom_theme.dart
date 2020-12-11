@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -77,7 +79,7 @@ class CustomTheme {
         dividerColor: Colors.grey,
         appBarTheme: AppBarTheme(
             brightness: Brightness.light,
-            elevation: 1,
+            elevation: Platform.isIOS ? 0 : 2,
             color: Color.fromARGB(255, 240, 242, 245),
             iconTheme: IconThemeData(color: fromHex('#000000')),
             textTheme: Typography.material2018(platform: defaultTargetPlatform)
@@ -178,7 +180,7 @@ class CustomTheme {
         appBarTheme: AppBarTheme(
             brightness: Brightness.dark,
             color: fromHex('#121212'),
-            elevation: 1,
+            elevation: Platform.isIOS ? 0 : 2,
             iconTheme: IconThemeData(color: Colors.white),
             textTheme: Typography.material2018(platform: defaultTargetPlatform)
                 .white

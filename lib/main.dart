@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:muezikfy/routes.dart';
 import 'shared_widgets/custom_theme.dart';
-import 'views/intro/splash_view.dart';
 
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -15,7 +16,13 @@ class MyApp extends StatelessWidget {
       theme: CustomTheme().customLightTheme(context),
       darkTheme: CustomTheme().customDarkTheme(context),
       themeMode: ThemeMode.system,
-      home: SplashView(),
+      onGenerateRoute: Routes.generateRoute,
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      localeResolutionCallback:
+          (Locale locale, Iterable<Locale> supportedLocales) {
+        return locale;
+      },
     );
   }
 }
