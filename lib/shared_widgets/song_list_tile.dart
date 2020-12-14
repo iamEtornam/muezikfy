@@ -93,20 +93,12 @@ class _SongListTileState extends State<SongListTile> {
               SizedBox(
                 width: 10,
               ),
-              Row(
-                children: [
-                  Text(
-                    widget.songDuration,
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle2
-                        .copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Icon( widget.isSelected? Icons.pause : Icons.play_arrow)
-                ],
+              Text(
+                widget.songDuration,
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle2
+                    .copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
