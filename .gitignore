@@ -43,3 +43,5 @@ android/app/google-services.json
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 android/app/src/main/AndroidManifest.xml
+android/app/src/main/res/values/strings.xml
+ios/Runner/Info.plist
