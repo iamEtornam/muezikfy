@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:muezikfy/views/auth/login_view.dart';
 import 'package:muezikfy/views/home/home_view.dart';
 import 'package:muezikfy/views/intro/splash_view.dart';
 import 'package:muezikfy/views/playing/playing_view.dart';
@@ -12,6 +13,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => HomeView());
       case '/playingView':
         return MaterialPageRoute(builder: (_) => PlayingView());
+      case '/loginView':
+        return MaterialPageRoute(builder: (_) => LoginView());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(
