@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class SongListTile extends StatefulWidget {
@@ -18,13 +20,13 @@ class SongListTile extends StatefulWidget {
 }
 
 class _SongListTileState extends State<SongListTile> {
-  UniqueKey _uniqueKey = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      key: _uniqueKey,
-      onTap: () => widget.onTap,
+      onTap: (){
+        widget.onTap();
+      },
       child: Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
@@ -43,8 +45,12 @@ class _SongListTileState extends State<SongListTile> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      widget.songCover,
+                    child: widget.songCover == null ? Image.asset(
+                      'assets/pop_smoke_album.png',
+                      width: 60,
+                      height: 60,
+                    ) : Image.file(
+                      File(widget.songCover),
                       width: 60,
                       height: 60,
                     ),
@@ -56,31 +62,41 @@ class _SongListTileState extends State<SongListTile> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(
-                        'The Woo year',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            .copyWith(fontWeight: FontWeight.w600),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width - 210,
+                        child: Text(
+                          widget.songTitle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              .copyWith(fontWeight: FontWeight.w600),
+                        ),
                       ),
-                      Text(
-                        'Pope Smoke',
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle2
-                            .copyWith(fontWeight: FontWeight.normal),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width - 210,
+                        child: Text(
+                          widget.songArtise,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle2
+                              .copyWith(fontWeight: FontWeight.normal),
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
               SizedBox(
-                width: 15,
+                width: 10,
               ),
               Row(
                 children: [
                   Text(
-                    '4:19',
+                    widget.songDuration,
                     style: Theme.of(context)
                         .textTheme
                         .subtitle2
@@ -89,7 +105,7 @@ class _SongListTileState extends State<SongListTile> {
                   SizedBox(
                     width: 8,
                   ),
-                  Icon(Icons.play_arrow)
+                  Icon( widget.isSelected? Icons.pause : Icons.play_arrow)
                 ],
               ),
             ],
