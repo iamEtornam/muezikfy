@@ -26,14 +26,9 @@ class _HomeViewState extends State<HomeView> {
   final ScrollController _scrollController = ScrollController();
   UniqueKey _listViewKey = UniqueKey();
   bool isSelected;
-  int _currentIndex = 0;
+  int _currentIndex;
   Song song;
-
-  @override
-  void initState() {
-    getMusic();
-    super.initState();
-  }
+  Duration duration;
 
   @override
   Widget build(BuildContext context) {
@@ -94,162 +89,176 @@ class _HomeViewState extends State<HomeView> {
                   .copyWith(fontWeight: FontWeight.w600),
             ),
           ),
-          FutureBuilder<List<Song>>(
-              future: _songsPersistenceService.getAllSongs(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting &&
-                    snapshot.data == null) {
-                  return CustomProgressIndicator();
-                }
+          Platform.isIOS
+              ? Column(
+                  children: [Text('No songs here')],
+                )
+              : FutureBuilder<List<Song>>(
+                  future: _songsPersistenceService.getAllSongs(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting &&
+                        snapshot.data == null) {
+                      return CustomProgressIndicator();
+                    }
 
-                return ListView.separated(
-                    key: _listViewKey,
-                    controller: _scrollController,
-                    padding: EdgeInsets.fromLTRB(16, 10, 16, 24),
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      print(snapshot.data[index].albumArtwork);
-                      return SongListTile(
-                        songTitle: snapshot.data[index].title,
-                        songDuration: parseToMinutesSeconds(
-                            int.tryParse(snapshot.data[index].duration)),
-                        songCover: snapshot.data[index].albumArtwork,
-                        songArtise: snapshot.data[index].artist ?? 'unknown',
-                        isSelected: _isThisCitizenSelected(index),
-                        onTap: () {
-                          _tapped(index);
-                          setState(() {
-                            song = snapshot.data[index];
-                          });
+                    return ListView.separated(
+                        key: _listViewKey,
+                        controller: _scrollController,
+                        padding: EdgeInsets.fromLTRB(16, 10, 16, 24),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          print(snapshot.data[index].albumArtwork);
+                          return SongListTile(
+                            songTitle: snapshot.data[index].title,
+                            songDuration: duration == null
+                                ? parseToMinutesSeconds(
+                                    int.tryParse(snapshot.data[index].duration))
+                                : parseToMinutesSeconds(
+                                    duration.inMilliseconds),
+                            songCover: snapshot.data[index].albumArtwork,
+                            songArtise:
+                                snapshot.data[index].artist ?? 'unknown',
+                            isSelected: _isThisCitizenSelected(index),
+                            onTap: () async {
+                              _tapped(index);
+                              playSong(songPath: snapshot.data[index].data);
+                              setState(() {
+                                song = snapshot.data[index];
+                              });
+                            },
+                          );
                         },
-                      );
-                    },
-                    separatorBuilder: (_, __) => SizedBox(
-                          height: 20,
-                        ),
-                    itemCount:
-                        snapshot.data == null ? 0 : snapshot.data.length);
-              })
+                        separatorBuilder: (_, __) => SizedBox(
+                              height: 20,
+                            ),
+                        itemCount:
+                            snapshot.data == null ? 0 : snapshot.data.length);
+                  })
         ],
       ),
-      bottomNavigationBar: song == null ? SizedBox() : GestureDetector(
-        onTap: () => Navigator.pushNamed(context, '/playingView'),
-        onVerticalDragStart: (details) =>
-            Navigator.pushNamed(context, '/playingView'),
-        child: Hero(
-          tag: 'to_playing',
-          child: Container(
-            padding: EdgeInsets.all(10),
-            width: size.width,
-            height: 90,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                  Colors.orangeAccent.withOpacity(.5),
-                  Colors.orangeAccent.withOpacity(.5),
-                  Colors.orangeAccent.withOpacity(.5),
-                  Colors.orange.withOpacity(.5),
-                  Colors.orangeAccent.withOpacity(.5),
-                ])),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 10,
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: song.albumArtwork == null ?  Image.asset(
-                    'assets/pop_smoke.jpeg',
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
-                  ) : Image.file(
-                    File(song.albumArtwork),
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
+      bottomNavigationBar: song == null
+          ? SizedBox()
+          : GestureDetector(
+              onTap: () => Navigator.pushNamed(context, '/playingView'),
+              onVerticalDragStart: (details) =>
+                  Navigator.pushNamed(context, '/playingView'),
+              child: Hero(
+                tag: 'to_playing',
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: size.width,
+                  height: 90,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [
+                        Colors.orangeAccent.withOpacity(.5),
+                        Colors.orangeAccent.withOpacity(.5),
+                        Colors.orangeAccent.withOpacity(.5),
+                        Colors.orange.withOpacity(.5),
+                        Colors.orangeAccent.withOpacity(.5),
+                      ])),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: song.albumArtwork == null
+                            ? Image.asset(
+                                'assets/pop_smoke.jpeg',
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.file(
+                                File(song.albumArtwork),
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: size.width - 245,
+                            height: 25,
+                            child: Marquee(
+                              text: song.title,
+                              scrollAxis: Axis.horizontal,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              blankSpace: 100.0,
+                              velocity: 100.0,
+                              pauseAfterRound: Duration(seconds: 3),
+                              accelerationDuration: Duration(seconds: 2),
+                              accelerationCurve: Curves.linear,
+                              decelerationDuration: Duration(milliseconds: 500),
+                              decelerationCurve: Curves.easeOut,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1
+                                  .copyWith(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width - 245,
+                            child: Text(
+                              song.artist ?? 'unknown',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2
+                                  .copyWith(fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Spacer(),
+                      Row(
+                        children: [
+                          IconButton(
+                              icon: Icon(Icons.skip_previous_rounded),
+                              onPressed: () {}),
+                          InkWell(
+                            onTap: () {},
+                            child: Container(
+                              width: 45,
+                              height: 45,
+                              child: Icon(
+                                Icons.pause,
+                                color: Colors.white,
+                              ),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(90),
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Colors.deepOrangeAccent.withOpacity(.5),
+                                        Colors.deepOrangeAccent.withOpacity(.5),
+                                        Colors.deepOrangeAccent,
+                                        Colors.deepOrange,
+                                      ])),
+                            ),
+                          ),
+                          IconButton(
+                              icon: Icon(Icons.skip_next), onPressed: () {}),
+                        ],
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: size.width - 245,
-                      height: 20,
-                      child: Marquee(
-                        text: song.title,
-                        scrollAxis: Axis.horizontal,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        blankSpace: 100.0,
-                        velocity: 100.0,
-                        pauseAfterRound: Duration(seconds: 3),
-                        accelerationDuration: Duration(seconds: 2),
-                        accelerationCurve: Curves.linear,
-                        decelerationDuration: Duration(milliseconds: 500),
-                        decelerationCurve: Curves.easeOut,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            .copyWith(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width - 245,
-                      child: Text(
-                        song.artist ?? 'unknown',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle2
-                            .copyWith(fontWeight: FontWeight.normal),
-                      ),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Row(
-                  children: [
-                    IconButton(
-                        icon: Icon(Icons.skip_previous_rounded),
-                        onPressed: () {}),
-                    InkWell(
-                      onTap: () {},
-                      child: Container(
-                        width: 45,
-                        height: 45,
-                        child: Icon(
-                          Icons.pause,
-                          color: Colors.white,
-                        ),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(90),
-                            gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Colors.deepOrangeAccent.withOpacity(.5),
-                                  Colors.deepOrangeAccent.withOpacity(.5),
-                                  Colors.deepOrangeAccent,
-                                  Colors.deepOrange,
-                                ])),
-                      ),
-                    ),
-                    IconButton(icon: Icon(Icons.skip_next), onPressed: () {}),
-                  ],
-                )
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -272,7 +281,21 @@ class _HomeViewState extends State<HomeView> {
     setState(() {});
   }
 
-  void getMusic() async {
-    await _songsPersistenceService.getAllSongs();
+  void playSong({String songPath}) async {
+    duration = await player.setFilePath(songPath);
+    if (player.playing) {
+      player.pause();
+    } else {
+      player.play();
+    }
+
+    player.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        duration = null;
+      }
+    });
+    print('*********************');
+    print(player.duration);
+    print(duration);
   }
 }
