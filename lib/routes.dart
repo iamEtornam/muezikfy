@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:muezikfy/views/auth/login_view.dart';
 import 'package:muezikfy/views/home/home_view.dart';
@@ -8,7 +9,7 @@ class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => SplashView());
+        return MaterialPageRoute(builder: (_) => AudioServiceWidget(child: SplashView()));
       case '/homeView':
         return MaterialPageRoute(builder: (_) => HomeView());
       case '/playingView':
