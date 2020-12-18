@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:muezikfy/utilities/custom_colors.dart';
 
 class SongListTile extends StatefulWidget {
   final String songCover;
@@ -45,15 +46,23 @@ class _SongListTileState extends State<SongListTile> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: widget.songCover == null ? Image.asset(
-                      'assets/pop_smoke_album.png',
-                      width: 60,
-                      height: 60,
-                    ) : Image.file(
-                      File(widget.songCover),
-                      width: 60,
-                      height: 60,
-                    ),
+                    child: Stack(children: [
+                      widget.songCover == null ? Image.asset(
+                        'assets/pop_smoke_album.png',
+                        width: 60,
+                        height: 60,
+                      ) : Image.file(
+                        File(widget.songCover),
+                        width: 60,
+                        height: 60,
+                      ),
+                      Container(
+                        width: 60,
+                        height: 60,
+                        color: Theme.of(context).scaffoldBackgroundColor.withOpacity(.3),
+                        child: Icon(widget.isSelected ? Icons.pause : Icons.play_arrow,color: colorMain,),
+                      )
+                    ],),
                   ),
                   SizedBox(
                     width: 15,
