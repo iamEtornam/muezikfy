@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:easy_permission_validator/easy_permission_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
@@ -20,6 +23,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final SongsPersistenceService _songsPersistenceService =
       SongsPersistenceService();
   final AudioPlayer player = AudioPlayer();
@@ -29,6 +33,12 @@ class _HomeViewState extends State<HomeView> {
   int _currentIndex;
   Song song;
   Duration duration;
+
+  @override
+  void initState() {
+    requestStoragePermission();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +52,12 @@ class _HomeViewState extends State<HomeView> {
               .headline6
               .copyWith(fontWeight: FontWeight.w600),
         ),
-        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {})],
+        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {}),IconButton(icon: Icon(Icons.more_vert), onPressed: () {
+          firebaseAuth.signOut();
+        })],
+      ),
+      drawer: Drawer(
+        
       ),
       body: ListView(
         controller: _scrollController,
@@ -144,7 +159,9 @@ class _HomeViewState extends State<HomeView> {
                   Navigator.pushNamed(context, '/playingView'),
               child: Hero(
                 tag: 'to_playing',
-                child: Container(
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 5000),
+                  curve: Curves.easeInOut,
                   padding: EdgeInsets.all(10),
                   width: size.width,
                   height: 90,
@@ -282,9 +299,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void playSong({String songPath}) async {
+    print(songPath);
     duration = await player.setFilePath(songPath);
     if (player.playing) {
-      player.pause();
+      player.stop();
+      player.play();
     } else {
       player.play();
     }
@@ -297,5 +316,13 @@ class _HomeViewState extends State<HomeView> {
     print('*********************');
     print(player.duration);
     print(duration);
+  }
+
+  requestStoragePermission() async {
+    final permissionValidator = EasyPermissionValidator(
+      context: context,
+      appName: 'Easy Permission Validator',
+    );
+    await permissionValidator.storage();
   }
 }
