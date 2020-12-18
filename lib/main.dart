@@ -1,13 +1,9 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:muezikfy/routes.dart';
-import 'package:muezikfy/shared_widgets/custom_progress_indicator.dart';
-import 'package:muezikfy/views/home/home_view.dart';
-import 'package:muezikfy/views/intro/splash_view.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'shared_widgets/custom_theme.dart';
