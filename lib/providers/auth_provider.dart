@@ -93,6 +93,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> signInWithFacebook() async {
     bool isSuccessful = false;
+    AuthCredential credential;
 
     try {
       final res = await _facebookLogin.logIn(permissions: [
@@ -103,7 +104,7 @@ class AuthProvider with ChangeNotifier {
       switch (res.status) {
         case FacebookLoginStatus.Success:
           final FacebookAccessToken accessToken = res.accessToken;
-          final AuthCredential credential = FacebookAuthProvider.credential(
+          credential = FacebookAuthProvider.credential(
             accessToken.token,
           );
           final User user =
