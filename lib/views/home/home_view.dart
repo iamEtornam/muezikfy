@@ -144,7 +144,7 @@ class _HomeViewState extends State<HomeView> {
                           );
                         },
                         separatorBuilder: (_, __) => SizedBox(
-                              height: 20,
+                              height: 10,
                             ),
                         itemCount:
                             snapshot.data == null ? 0 : snapshot.data.length);
