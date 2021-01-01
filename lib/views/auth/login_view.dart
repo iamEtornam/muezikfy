@@ -36,7 +36,10 @@ class _LoginViewState extends State<LoginView> {
                         .copyWith(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
+                  FlutterLogo(size: 120,),
+                      Spacer(),
                   FlatButton(
+                    color: Colors.white,
                     padding: EdgeInsets.all(15),
                     onPressed: () async {
                       BotToast.showLoading(
