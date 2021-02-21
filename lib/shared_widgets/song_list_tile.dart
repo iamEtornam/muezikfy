@@ -13,7 +13,8 @@ class SongListTile extends StatefulWidget {
   const SongListTile({
     Key key,
     @required this.isSelected,
-    @required this.onTap,@required this.songCover, this.songTitle, this.songArtise, this.songDuration,
+    @required this.onTap,
+    @required this.songCover, this.songTitle, this.songArtise, this.songDuration,
   }) : super(key: key);
 
   @override
