@@ -46,3 +46,6 @@ android/app/src/main/AndroidManifest.xml
 android/app/src/main/res/values/strings.xml
 ios/Runner/Info.plist
 ios/Runner/Info.plist
+ios/firebase_app_id_file.json
+.firebaserc
+lib/firebase_options.dart
