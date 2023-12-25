@@ -13,11 +13,12 @@ class _SplashViewState extends State<SplashView> {
   final OnAudioQuery audioQuery = OnAudioQuery();
   final SongsPersistenceService _songsPersistenceService =
       SongsPersistenceService();
+  late BuildContext buildContext;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loginAuthState(context);
+      loginAuthState(buildContext);
     });
     super.initState();
   }
@@ -37,6 +38,7 @@ class _SplashViewState extends State<SplashView> {
 
   @override
   Widget build(BuildContext context) {
+    buildContext = context;
     return Scaffold(
       body: Column(
         children: [

@@ -31,15 +31,19 @@ class _HomeViewState extends State<HomeView> {
   int? _currentIndex;
   Song? song;
   Duration? duration;
+  late BuildContext buildContext;
 
   @override
   void initState() {
-    requestStoragePermission();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      requestStoragePermission(buildContext);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    buildContext = context;
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -310,7 +314,7 @@ class _HomeViewState extends State<HomeView> {
     print(duration);
   }
 
-  requestStoragePermission() async {
+  requestStoragePermission(BuildContext context) async {
     final permissionValidator = EasyPermissionValidator(
       context: context,
       appName: 'Easy Permission Validator',

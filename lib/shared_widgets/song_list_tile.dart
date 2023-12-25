@@ -25,7 +25,7 @@ class SongListTile extends StatefulWidget {
 
 class _SongListTileState extends State<SongListTile> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext buildContext) {
     return GestureDetector(
       onTap: () {
         widget.onTap();
@@ -36,7 +36,7 @@ class _SongListTileState extends State<SongListTile> {
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: _tileColor())),
+                colors: _tileColor(buildContext))),
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Row(
@@ -58,7 +58,7 @@ class _SongListTileState extends State<SongListTile> {
                         Container(
                           width: 60,
                           height: 60,
-                          color: Theme.of(context)
+                          color: Theme.of(buildContext)
                               .scaffoldBackgroundColor
                               .withOpacity(.3),
                           child: Icon(
@@ -77,24 +77,24 @@ class _SongListTileState extends State<SongListTile> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width - 210,
+                        width: MediaQuery.of(buildContext).size.width - 210,
                         child: Text(
                           widget.songTitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
+                          style: Theme.of(buildContext)
                               .textTheme
                               .bodyLarge!
                               .copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width - 210,
+                        width: MediaQuery.of(buildContext).size.width - 210,
                         child: Text(
                           widget.songArtise,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
+                          style: Theme.of(buildContext)
                               .textTheme
                               .titleSmall!
                               .copyWith(fontWeight: FontWeight.normal),
@@ -109,7 +109,7 @@ class _SongListTileState extends State<SongListTile> {
               ),
               Text(
                 widget.songDuration,
-                style: Theme.of(context)
+                style: Theme.of(buildContext)
                     .textTheme
                     .titleSmall!
                     .copyWith(fontWeight: FontWeight.w600),
@@ -121,7 +121,7 @@ class _SongListTileState extends State<SongListTile> {
     );
   }
 
-  List<Color> _tileColor() {
+  List<Color> _tileColor(BuildContext buildContext) {
     if (widget.isSelected) {
       return [
         Colors.orangeAccent.withOpacity(.5),
@@ -132,8 +132,8 @@ class _SongListTileState extends State<SongListTile> {
       ];
     } else {
       return [
-        Theme.of(context).scaffoldBackgroundColor,
-        Theme.of(context).scaffoldBackgroundColor
+        Theme.of(buildContext).scaffoldBackgroundColor,
+        Theme.of(buildContext).scaffoldBackgroundColor
       ];
     }
   }
