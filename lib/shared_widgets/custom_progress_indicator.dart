@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class CustomProgressIndicator extends StatelessWidget {
   final double size;
 
-  const CustomProgressIndicator({Key key, this.size = 45.0}) : super(key: key);
+  const CustomProgressIndicator({Key? key, this.size = 45.0}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Center(

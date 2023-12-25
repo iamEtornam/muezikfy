@@ -3,8 +3,8 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 
 alertNotification(
-    {@required String message,
-      @required BuildContext context,
+    {required String message,
+      required BuildContext context,
       int duration = 3}) {
   return BotToast.showSimpleNotification(
       duration: Duration(seconds: duration),

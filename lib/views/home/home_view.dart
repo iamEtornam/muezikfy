@@ -11,10 +11,10 @@ import 'package:muezikfy/shared_widgets/custom_progress_indicator.dart';
 import 'package:muezikfy/shared_widgets/song_list_tile.dart';
 import 'package:muezikfy/shared_widgets/status_friends_widget.dart';
 import 'package:muezikfy/utilities/ui_util.dart';
-import 'package:sample_data/sample_data.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class HomeView extends StatefulWidget {
-  HomeView({Key key}) : super(key: key);
+  HomeView({Key? key}) : super(key: key);
 
   @override
   _HomeViewState createState() => _HomeViewState();
@@ -27,10 +27,10 @@ class _HomeViewState extends State<HomeView> {
   final AudioPlayer player = AudioPlayer();
   final ScrollController _scrollController = ScrollController();
   UniqueKey _listViewKey = UniqueKey();
-  bool isSelected;
-  int _currentIndex;
-  Song song;
-  Duration duration;
+  bool isSelected = false;
+  int? _currentIndex;
+  Song? song;
+  Duration? duration;
 
   @override
   void initState() {
@@ -47,16 +47,19 @@ class _HomeViewState extends State<HomeView> {
           'MUEZIKFY',
           style: Theme.of(context)
               .textTheme
-              .headline6
+              .titleLarge!
               .copyWith(fontWeight: FontWeight.w600),
         ),
-        actions: [IconButton(icon: Icon(Icons.search), onPressed: () {}),IconButton(icon: Icon(Icons.more_vert), onPressed: () {
-          firebaseAuth.signOut();
-        })],
+        actions: [
+          IconButton(icon: Icon(Icons.search), onPressed: () {}),
+          IconButton(
+              icon: Icon(Icons.more_vert),
+              onPressed: () {
+                firebaseAuth.signOut();
+              })
+        ],
       ),
-      drawer: Drawer(
-        
-      ),
+      drawer: Drawer(),
       body: ListView(
         controller: _scrollController,
         children: [
@@ -68,7 +71,7 @@ class _HomeViewState extends State<HomeView> {
               'what are your friends listening to?',
               style: Theme.of(context)
                   .textTheme
-                  .subtitle2
+                  .titleSmall!
                   .copyWith(fontWeight: FontWeight.normal),
             ),
           ),
@@ -83,8 +86,8 @@ class _HomeViewState extends State<HomeView> {
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: 20,
-                  itemBuilder: (context, index) => StatusFriendsWidget(
-                      avatar: kidsAvatar(), name: userName())),
+                  itemBuilder: (context, index) =>
+                      StatusFriendsWidget(avatar: '', name: 'Kofi')),
             ),
           ),
           SizedBox(
@@ -98,7 +101,7 @@ class _HomeViewState extends State<HomeView> {
               'Songs',
               style: Theme.of(context)
                   .textTheme
-                  .bodyText1
+                  .bodyLarge!
                   .copyWith(fontWeight: FontWeight.w600),
             ),
           ),
@@ -120,23 +123,22 @@ class _HomeViewState extends State<HomeView> {
                         padding: EdgeInsets.fromLTRB(16, 10, 16, 24),
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          print(snapshot.data[index].albumArtwork);
                           return SongListTile(
-                            songTitle: snapshot.data[index].title,
+                            songTitle: snapshot.data?[index].title ?? 'unknown',
                             songDuration: duration == null
                                 ? parseToMinutesSeconds(
-                                    int.tryParse(snapshot.data[index].duration))
+                                    snapshot.data?[index].duration ?? 0)
                                 : parseToMinutesSeconds(
-                                    duration.inMilliseconds),
-                            songCover: snapshot.data[index].albumArtwork,
+                                    duration?.inMilliseconds ?? 0),
+                            songCover: snapshot.data![index].audioId!,
                             songArtise:
-                                snapshot.data[index].artist ?? 'unknown',
+                                snapshot.data?[index].artist ?? 'unknown',
                             isSelected: _isThisCitizenSelected(index),
                             onTap: () async {
                               _tapped(index);
-                              playSong(songPath: snapshot.data[index].data);
+                              playSong(songPath: snapshot.data![index].data!);
                               setState(() {
-                                song = snapshot.data[index];
+                                song = snapshot.data![index];
                               });
                             },
                           );
@@ -145,7 +147,7 @@ class _HomeViewState extends State<HomeView> {
                               height: 10,
                             ),
                         itemCount:
-                            snapshot.data == null ? 0 : snapshot.data.length);
+                            snapshot.data == null ? 0 : snapshot.data!.length);
                   })
         ],
       ),
@@ -182,19 +184,11 @@ class _HomeViewState extends State<HomeView> {
                       ),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: song.albumArtwork == null
-                            ? Image.asset(
-                                'assets/pop_smoke.jpeg',
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.file(
-                                File(song.albumArtwork),
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                              ),
+                        child: QueryArtworkWidget(
+                          id: song!.audioId!,
+                          type: ArtworkType.AUDIO,
+                          size: 60,
+                        ),
                       ),
                       SizedBox(
                         width: 10,
@@ -207,7 +201,7 @@ class _HomeViewState extends State<HomeView> {
                             width: size.width - 245,
                             height: 25,
                             child: Marquee(
-                              text: song.title,
+                              text: song!.title!,
                               scrollAxis: Axis.horizontal,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               blankSpace: 100.0,
@@ -219,19 +213,19 @@ class _HomeViewState extends State<HomeView> {
                               decelerationCurve: Curves.easeOut,
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyText1
+                                  .bodyLarge!
                                   .copyWith(fontWeight: FontWeight.w600),
                             ),
                           ),
                           SizedBox(
                             width: size.width - 245,
                             child: Text(
-                              song.artist ?? 'unknown',
+                              song?.artist ?? 'unknown',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle2
+                                  .titleSmall!
                                   .copyWith(fontWeight: FontWeight.normal),
                             ),
                           ),
@@ -296,7 +290,7 @@ class _HomeViewState extends State<HomeView> {
     setState(() {});
   }
 
-  void playSong({String songPath}) async {
+  void playSong({required String songPath}) async {
     print(songPath);
     duration = await player.setFilePath(songPath);
     if (player.playing) {

@@ -1,7 +1,6 @@
-import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:muezikfy/models/song.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 class SongsPersistenceService {
   static const tableSongs = """
@@ -16,32 +15,30 @@ class SongsPersistenceService {
     return database;
   }
 
-  Future<bool> insertSongs({List<SongInfo> songs}) async {
+  Future<bool> insertSongs({required List<AudioModel> songs}) async {
     Song song;
     final Database db = await initialiseDatabase();
     await db.execute('DELETE FROM my_songs');
     songs.forEach((element) {
       song = Song(
           album: element.album,
-          albumArtwork: element.albumArtwork,
           albumId: element.albumId,
           artist: element.artist,
           artistId: element.artistId,
           bookmark: element.bookmark,
           composer: element.composer,
-          displayName: element.displayName,
+          displayName: element.displayNameWOExt,
           duration: element.duration,
           isAlarm: element.isAlarm,
           isMusic: element.isMusic,
           isNotification: element.isNotification,
           isPodcast: element.isPodcast,
           isRingtone: element.isRingtone,
-          size: element.fileSize,
+          size: element.size,
           title: element.title,
           track: element.track,
           uri: element.uri,
-          year: element.year,
-          data: element.filePath);
+          data: element.data);
 
       db.insert(
         'my_songs',
@@ -59,25 +56,25 @@ class SongsPersistenceService {
     return List.generate(
         maps.length,
         (index) => Song(
-            data: maps[index]['_data'],
-            album: maps[index]['album'],
-            albumArtwork: maps[index]['album_artwork'],
-            albumId: maps[index]['album_id'],
-            artist: maps[index]['artist'],
-            artistId: maps[index]['artist_id'],
-            bookmark: maps[index]['bookmark'],
-            composer: maps[index]['composer'],
-            displayName: maps[index]['_display_name'],
-            duration: maps[index]['duration'],
-            isAlarm: maps[index]['is_alarm'] == 1 ? true : false,
-            isMusic: maps[index]['is_music'] == 1 ? true : false,
-            isNotification: maps[index]['is_notification'] == 1 ? true : false,
-            isPodcast: maps[index]['is_podcast'] == 1 ? true : false,
-            isRingtone: maps[index]['is_ringtone'] == 1 ? true : false,
-            size: maps[index]['_size'],
-            title: maps[index]['title'],
-            track: maps[index]['track'],
-            uri: maps[index]['uri'],
-            year: maps[index]['year']));
+              data: maps[index]['_data'],
+              album: maps[index]['album'],
+              albumId: maps[index]['album_id'],
+              artist: maps[index]['artist'],
+              artistId: maps[index]['artist_id'],
+              bookmark: maps[index]['bookmark'],
+              composer: maps[index]['composer'],
+              displayName: maps[index]['_display_name'],
+              duration: maps[index]['duration'],
+              isAlarm: maps[index]['is_alarm'] == 1 ? true : false,
+              isMusic: maps[index]['is_music'] == 1 ? true : false,
+              isNotification:
+                  maps[index]['is_notification'] == 1 ? true : false,
+              isPodcast: maps[index]['is_podcast'] == 1 ? true : false,
+              isRingtone: maps[index]['is_ringtone'] == 1 ? true : false,
+              size: maps[index]['_size'],
+              title: maps[index]['title'],
+              track: maps[index]['track'],
+              uri: maps[index]['uri'],
+            ));
   }
 }

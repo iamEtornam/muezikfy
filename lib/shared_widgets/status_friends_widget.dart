@@ -5,15 +5,15 @@ class StatusFriendsWidget extends StatelessWidget {
   final String avatar;
   final String name;
   const StatusFriendsWidget({
-    Key key,
-    @required this.avatar,
-    @required this.name,
+    Key? key,
+    required this.avatar,
+    required this.name,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){},
+      onTap: () {},
       borderRadius: BorderRadius.circular(10),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
@@ -32,7 +32,8 @@ class StatusFriendsWidget extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 33,
                   backgroundColor: colorMain.withOpacity(.5),
-                  backgroundImage: ExactAssetImage(avatar, package: 'sample_data'),
+                  backgroundImage:
+                      ExactAssetImage(avatar, package: 'sample_data'),
                 ),
               ),
             ),
@@ -45,7 +46,7 @@ class StatusFriendsWidget extends StatelessWidget {
                   name,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.subtitle2,
+                  style: Theme.of(context).textTheme.titleSmall,
                 )),
           ],
         ),

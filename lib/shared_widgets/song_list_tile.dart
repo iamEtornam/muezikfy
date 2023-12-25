@@ -1,20 +1,22 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:muezikfy/utilities/custom_colors.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class SongListTile extends StatefulWidget {
-  final String songCover;
+  final int? songCover;
   final String songTitle;
   final String songArtise;
   final String songDuration;
   final Function onTap;
   final bool isSelected;
   const SongListTile({
-    Key key,
-    @required this.isSelected,
-    @required this.onTap,
-    @required this.songCover, this.songTitle, this.songArtise, this.songDuration,
+    Key? key,
+    required this.isSelected,
+    required this.onTap,
+    this.songCover,
+    required this.songTitle,
+    required this.songArtise,
+    required this.songDuration,
   }) : super(key: key);
 
   @override
@@ -22,11 +24,10 @@ class SongListTile extends StatefulWidget {
 }
 
 class _SongListTileState extends State<SongListTile> {
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         widget.onTap();
       },
       child: Container(
@@ -47,23 +48,26 @@ class _SongListTileState extends State<SongListTile> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Stack(children: [
-                      widget.songCover == null ? Image.asset(
-                        'assets/pop_smoke_album.png',
-                        width: 60,
-                        height: 60,
-                      ) : Image.file(
-                        File(widget.songCover),
-                        width: 60,
-                        height: 60,
-                      ),
-                      Container(
-                        width: 60,
-                        height: 60,
-                        color: Theme.of(context).scaffoldBackgroundColor.withOpacity(.3),
-                        child: Icon(widget.isSelected ? Icons.pause : Icons.play_arrow,color: colorMain,),
-                      )
-                    ],),
+                    child: Stack(
+                      children: [
+                        QueryArtworkWidget(
+                          id: widget.songCover ?? 0,
+                          type: ArtworkType.AUDIO,
+                          size: 60,
+                        ),
+                        Container(
+                          width: 60,
+                          height: 60,
+                          color: Theme.of(context)
+                              .scaffoldBackgroundColor
+                              .withOpacity(.3),
+                          child: Icon(
+                            widget.isSelected ? Icons.pause : Icons.play_arrow,
+                            color: colorMain,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(
                     width: 15,
@@ -80,7 +84,7 @@ class _SongListTileState extends State<SongListTile> {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
-                              .bodyText1
+                              .bodyLarge!
                               .copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -92,7 +96,7 @@ class _SongListTileState extends State<SongListTile> {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
-                              .subtitle2
+                              .titleSmall!
                               .copyWith(fontWeight: FontWeight.normal),
                         ),
                       ),
@@ -107,7 +111,7 @@ class _SongListTileState extends State<SongListTile> {
                 widget.songDuration,
                 style: Theme.of(context)
                     .textTheme
-                    .subtitle2
+                    .titleSmall!
                     .copyWith(fontWeight: FontWeight.w600),
               ),
             ],
