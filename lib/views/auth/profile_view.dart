@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -28,10 +29,10 @@ class _ProfileViewState extends State<ProfileView> {
   late AuthProvider authProvider;
   Person? user;
   final formKey = GlobalKey<FormState>();
-  late TextEditingController _firstNameTextController;
-  late TextEditingController _lastNameTextController;
-  late TextEditingController _userNameTextController;
-  late TextEditingController _emailTextController;
+  TextEditingController? _firstNameTextController;
+  TextEditingController? _lastNameTextController;
+  TextEditingController? _userNameTextController;
+  TextEditingController? _emailTextController;
   String phoneUrl = '';
   bool discoverable = true;
 
@@ -309,17 +310,22 @@ class _ProfileViewState extends State<ProfileView> {
               label: 'Update',
               onPressed: () async {
                 if (formKey.currentState!.validate() && imageFile != null) {
+                  BotToast.showLoading(
+                      allowClick: false,
+                      clickClose: false,
+                      backButtonBehavior: BackButtonBehavior.ignore);
                   final photoUrl = await authProvider.uploadPhoto(
                       file: await imageFile!.readAsBytes(),
                       path: imageFile!.path);
                   await authProvider.updateUser(Person(
-                      firstName: _firstNameTextController.text,
-                      lastName: _lastNameTextController.text,
+                      firstName: _firstNameTextController!.text,
+                      lastName: _lastNameTextController!.text,
                       photoUrl: photoUrl,
-                      email: _emailTextController.text,
+                      email: _emailTextController!.text,
                       createdAt: DateTime.now().toString(),
-                      userId: user!.userId,
+                      userId: authProvider.currentUser!.uid,
                       discoverable: discoverable));
+                  BotToast.closeAllLoading();
                   if (!mounted) return;
 
                   context.goNamed(RoutesName.home);
