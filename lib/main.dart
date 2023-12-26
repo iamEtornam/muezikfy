@@ -1,7 +1,8 @@
 import 'package:bot_toast/bot_toast.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio_background/just_audio_background.dart';
+import 'package:muezikfy/firebase_options.dart';
 import 'package:muezikfy/routes.dart';
 import 'package:provider/provider.dart';
 
@@ -10,33 +11,34 @@ import 'shared_widgets/custom_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'dev.etornam.muezikfy.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+  );
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthProvider>.value(value: AuthProvider())
       ],
-      child: MaterialApp(
-        
+      child: MaterialApp.router(
         title: 'Muezikfy',
         builder: BotToastInit(),
+        routeInformationProvider: router.routeInformationProvider,
+        routeInformationParser: router.routeInformationParser,
+        routerDelegate: router.routerDelegate,
+        debugShowCheckedModeBanner: false,
         theme: CustomTheme().customLightTheme(context),
         darkTheme: CustomTheme().customDarkTheme(context),
         themeMode: ThemeMode.system,
-        onGenerateRoute: Routes.generateRoute,
-        debugShowCheckedModeBanner: false,
-        initialRoute: '/',
-        navigatorObservers: [
-          FirebaseAnalyticsObserver(analytics: _analytics),
-          BotToastNavigatorObserver()
-        ],
       ),
     );
   }
