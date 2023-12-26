@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:muezikfy/utilities/custom_colors.dart';
+import 'package:muezikfy/utilities/color_schemes.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class SongListTile extends StatefulWidget {

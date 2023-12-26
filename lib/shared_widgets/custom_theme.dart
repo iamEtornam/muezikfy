@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:muezikfy/utilities/custom_colors.dart';
+import 'package:muezikfy/utilities/color_schemes.dart';
 
 class CustomTheme {
   /// light theme
@@ -80,48 +80,56 @@ class CustomTheme {
           color: const Color.fromARGB(255, 240, 242, 245),
           iconTheme: IconThemeData(color: fromHex('#000000')),
           systemOverlayStyle: SystemUiOverlayStyle.dark,
-          toolbarTextStyle:
-              Typography.material2018(platform: defaultTargetPlatform)
-                  .white
-                  .copyWith(
-                    bodyLarge: const TextStyle(color: Colors.black, fontSize: 17),
-                    bodyMedium: const TextStyle(color: Colors.black, fontSize: 14),
-                    bodySmall: const TextStyle(color: Colors.black, fontSize: 12),
-                    displayLarge: const TextStyle(color: Colors.black, fontSize: 96),
-                    displayMedium: const TextStyle(color: Colors.black, fontSize: 60),
-                    displaySmall: const TextStyle(color: Colors.black, fontSize: 48),
-                    headlineMedium:
-                        const TextStyle(color: Colors.black, fontSize: 34),
-                    headlineSmall: const TextStyle(color: Colors.black, fontSize: 24),
-                    titleLarge: const TextStyle(color: Colors.black, fontSize: 20),
-                    titleMedium: const TextStyle(color: Colors.black, fontSize: 16),
-                    titleSmall: const TextStyle(color: Colors.black, fontSize: 14),
-                    labelSmall: const TextStyle(color: Colors.black, fontSize: 10),
-                    labelLarge: const TextStyle(color: Colors.black, fontSize: 16),
-                  )
-                  .bodyMedium,
-          titleTextStyle:
-              Typography.material2018(platform: defaultTargetPlatform)
-                  .white
-                  .copyWith(
-                    bodyLarge: const TextStyle(color: Colors.black, fontSize: 17),
-                    bodyMedium: const TextStyle(color: Colors.black, fontSize: 14),
-                    bodySmall: const TextStyle(color: Colors.black, fontSize: 12),
-                    displayLarge: const TextStyle(color: Colors.black, fontSize: 96),
-                    displayMedium: const TextStyle(color: Colors.black, fontSize: 60),
-                    displaySmall: const TextStyle(color: Colors.black, fontSize: 48),
-                    headlineMedium:
-                        const TextStyle(color: Colors.black, fontSize: 34),
-                    headlineSmall: const TextStyle(color: Colors.black, fontSize: 24),
-                    titleLarge: const TextStyle(color: Colors.black, fontSize: 20),
-                    titleMedium: const TextStyle(color: Colors.black, fontSize: 16),
-                    titleSmall: const TextStyle(color: Colors.black, fontSize: 14),
-                    labelSmall: const TextStyle(color: Colors.black, fontSize: 10),
-                    labelLarge: const TextStyle(color: Colors.black, fontSize: 16),
-                  )
-                  .titleLarge),
+          toolbarTextStyle: Typography.material2018(
+                  platform: defaultTargetPlatform)
+              .white
+              .copyWith(
+                bodyLarge: const TextStyle(color: Colors.black, fontSize: 17),
+                bodyMedium: const TextStyle(color: Colors.black, fontSize: 14),
+                bodySmall: const TextStyle(color: Colors.black, fontSize: 12),
+                displayLarge:
+                    const TextStyle(color: Colors.black, fontSize: 96),
+                displayMedium:
+                    const TextStyle(color: Colors.black, fontSize: 60),
+                displaySmall:
+                    const TextStyle(color: Colors.black, fontSize: 48),
+                headlineMedium:
+                    const TextStyle(color: Colors.black, fontSize: 34),
+                headlineSmall:
+                    const TextStyle(color: Colors.black, fontSize: 24),
+                titleLarge: const TextStyle(color: Colors.black, fontSize: 20),
+                titleMedium: const TextStyle(color: Colors.black, fontSize: 16),
+                titleSmall: const TextStyle(color: Colors.black, fontSize: 14),
+                labelSmall: const TextStyle(color: Colors.black, fontSize: 10),
+                labelLarge: const TextStyle(color: Colors.black, fontSize: 16),
+              )
+              .bodyMedium,
+          titleTextStyle: Typography.material2018(
+                  platform: defaultTargetPlatform)
+              .white
+              .copyWith(
+                bodyLarge: const TextStyle(color: Colors.black, fontSize: 17),
+                bodyMedium: const TextStyle(color: Colors.black, fontSize: 14),
+                bodySmall: const TextStyle(color: Colors.black, fontSize: 12),
+                displayLarge:
+                    const TextStyle(color: Colors.black, fontSize: 96),
+                displayMedium:
+                    const TextStyle(color: Colors.black, fontSize: 60),
+                displaySmall:
+                    const TextStyle(color: Colors.black, fontSize: 48),
+                headlineMedium:
+                    const TextStyle(color: Colors.black, fontSize: 34),
+                headlineSmall:
+                    const TextStyle(color: Colors.black, fontSize: 24),
+                titleLarge: const TextStyle(color: Colors.black, fontSize: 20),
+                titleMedium: const TextStyle(color: Colors.black, fontSize: 16),
+                titleSmall: const TextStyle(color: Colors.black, fontSize: 14),
+                labelSmall: const TextStyle(color: Colors.black, fontSize: 10),
+                labelLarge: const TextStyle(color: Colors.black, fontSize: 16),
+              )
+              .titleLarge),
       textSelectionTheme: const TextSelectionThemeData(cursorColor: colorMain),
-      colorScheme: ColorScheme.fromSwatch().copyWith(secondary: colorMain, brightness: Brightness.light),
+      colorScheme: lightColorScheme,
     );
   }
 
@@ -155,7 +163,8 @@ class CustomTheme {
             displayLarge: const TextStyle(color: Colors.white70, fontSize: 96),
             displayMedium: const TextStyle(color: Colors.white70, fontSize: 60),
             displaySmall: const TextStyle(color: Colors.white70, fontSize: 48),
-            headlineMedium: const TextStyle(color: Colors.white70, fontSize: 34),
+            headlineMedium:
+                const TextStyle(color: Colors.white70, fontSize: 34),
             headlineSmall: const TextStyle(color: Colors.white70, fontSize: 24),
             titleLarge: const TextStyle(color: Colors.white70, fontSize: 20),
             titleMedium: const TextStyle(color: Colors.white70, fontSize: 16),
@@ -209,18 +218,29 @@ class CustomTheme {
               .white
               .copyWith(
                 bodyLarge: const TextStyle(color: Colors.white70, fontSize: 17),
-                bodyMedium: const TextStyle(color: Colors.white70, fontSize: 14),
+                bodyMedium:
+                    const TextStyle(color: Colors.white70, fontSize: 14),
                 bodySmall: const TextStyle(color: Colors.white70, fontSize: 12),
-                displayLarge: const TextStyle(color: Colors.white70, fontSize: 96),
-                displayMedium: const TextStyle(color: Colors.white70, fontSize: 60),
-                displaySmall: const TextStyle(color: Colors.white70, fontSize: 48),
-                headlineMedium: const TextStyle(color: Colors.white70, fontSize: 34),
-                headlineSmall: const TextStyle(color: Colors.white70, fontSize: 24),
-                titleLarge: const TextStyle(color: Colors.white70, fontSize: 20),
-                titleMedium: const TextStyle(color: Colors.white70, fontSize: 16),
-                titleSmall: const TextStyle(color: Colors.white70, fontSize: 14),
-                labelSmall: const TextStyle(color: Colors.white70, fontSize: 10),
-                labelLarge: const TextStyle(color: Colors.white70, fontSize: 16),
+                displayLarge:
+                    const TextStyle(color: Colors.white70, fontSize: 96),
+                displayMedium:
+                    const TextStyle(color: Colors.white70, fontSize: 60),
+                displaySmall:
+                    const TextStyle(color: Colors.white70, fontSize: 48),
+                headlineMedium:
+                    const TextStyle(color: Colors.white70, fontSize: 34),
+                headlineSmall:
+                    const TextStyle(color: Colors.white70, fontSize: 24),
+                titleLarge:
+                    const TextStyle(color: Colors.white70, fontSize: 20),
+                titleMedium:
+                    const TextStyle(color: Colors.white70, fontSize: 16),
+                titleSmall:
+                    const TextStyle(color: Colors.white70, fontSize: 14),
+                labelSmall:
+                    const TextStyle(color: Colors.white70, fontSize: 10),
+                labelLarge:
+                    const TextStyle(color: Colors.white70, fontSize: 16),
               )
               .bodyMedium,
           titleTextStyle: Typography.material2018(
@@ -228,22 +248,33 @@ class CustomTheme {
               .white
               .copyWith(
                 bodyLarge: const TextStyle(color: Colors.white70, fontSize: 17),
-                bodyMedium: const TextStyle(color: Colors.white70, fontSize: 14),
+                bodyMedium:
+                    const TextStyle(color: Colors.white70, fontSize: 14),
                 bodySmall: const TextStyle(color: Colors.white70, fontSize: 12),
-                displayLarge: const TextStyle(color: Colors.white70, fontSize: 96),
-                displayMedium: const TextStyle(color: Colors.white70, fontSize: 60),
-                displaySmall: const TextStyle(color: Colors.white70, fontSize: 48),
-                headlineMedium: const TextStyle(color: Colors.white70, fontSize: 34),
-                headlineSmall: const TextStyle(color: Colors.white70, fontSize: 24),
-                titleLarge: const TextStyle(color: Colors.white70, fontSize: 20),
-                titleMedium: const TextStyle(color: Colors.white70, fontSize: 16),
-                titleSmall: const TextStyle(color: Colors.white70, fontSize: 14),
-                labelSmall: const TextStyle(color: Colors.white70, fontSize: 10),
-                labelLarge: const TextStyle(color: Colors.white70, fontSize: 16),
+                displayLarge:
+                    const TextStyle(color: Colors.white70, fontSize: 96),
+                displayMedium:
+                    const TextStyle(color: Colors.white70, fontSize: 60),
+                displaySmall:
+                    const TextStyle(color: Colors.white70, fontSize: 48),
+                headlineMedium:
+                    const TextStyle(color: Colors.white70, fontSize: 34),
+                headlineSmall:
+                    const TextStyle(color: Colors.white70, fontSize: 24),
+                titleLarge:
+                    const TextStyle(color: Colors.white70, fontSize: 20),
+                titleMedium:
+                    const TextStyle(color: Colors.white70, fontSize: 16),
+                titleSmall:
+                    const TextStyle(color: Colors.white70, fontSize: 14),
+                labelSmall:
+                    const TextStyle(color: Colors.white70, fontSize: 10),
+                labelLarge:
+                    const TextStyle(color: Colors.white70, fontSize: 16),
               )
               .titleLarge),
       textSelectionTheme: const TextSelectionThemeData(cursorColor: colorMain),
-      colorScheme: ColorScheme.fromSwatch().copyWith(secondary: colorMain, brightness: Brightness.dark),
+      colorScheme: darkColorScheme,
     );
   }
 }

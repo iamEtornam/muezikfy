@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:muezikfy/utilities/custom_colors.dart';
+import 'package:muezikfy/utilities/color_schemes.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
 class PrimaryButton extends StatelessWidget {
@@ -53,7 +53,9 @@ class PrimaryButton extends StatelessWidget {
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                      color: disabled ? const Color(0xFFF5F5F5) : textColor ?? Colors.white,
+                      color: disabled
+                          ? const Color(0xFFF5F5F5)
+                          : textColor ?? Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
@@ -117,7 +119,9 @@ class SecondaryButton extends StatelessWidget {
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                      color: disabled ? const Color(0xFFC8C8C8) : textColor ?? Colors.black,
+                      color: disabled
+                          ? const Color(0xFFC8C8C8)
+                          : textColor ?? Colors.black,
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),

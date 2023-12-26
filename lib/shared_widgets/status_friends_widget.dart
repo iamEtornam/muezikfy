@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
 import 'package:muezikfy/shared_widgets/custom_progress_indicator.dart';
-import 'package:muezikfy/utilities/custom_colors.dart';
+import 'package:muezikfy/utilities/color_schemes.dart';
 import 'package:provider/provider.dart';
 
 class StatusFriendsWidget extends StatelessWidget {
@@ -19,7 +19,8 @@ class StatusFriendsWidget extends StatelessWidget {
         stream: Provider.of<AuthProvider>(context, listen: false)
             .getFriendProfile(friendId),
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting && snapshot.data == null) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              snapshot.data == null) {
             return const CustomProgressIndicator();
           }
           if (snapshot.data?.exists == false) {

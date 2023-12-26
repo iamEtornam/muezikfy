@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
-import 'package:muezikfy/utilities/custom_colors.dart';
+import 'package:muezikfy/utilities/color_schemes.dart';
 import 'package:provider/provider.dart';
 
 class FriendsListView extends StatefulWidget {
@@ -44,12 +44,51 @@ class _FriendsListViewState extends State<FriendsListView> {
 
               return InkWell(
                 onTap: () async {
-                  BotToast.showLoading(
-                      allowClick: false,
-                      clickClose: false,
-                      backButtonBehavior: BackButtonBehavior.ignore);
-                  await authProvider.addPersonAsFriend(user['uid']);
-                  BotToast.closeAllLoading();
+                  final res = await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog.adaptive(
+                          title: Text(
+                            'Information',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          content: Text(
+                            'Add "${user['first_name']} ${user['last_name']}" as a friend?',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                child: Text(
+                                  'Cancel',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(color: Colors.red),
+                                )),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                                child: Text(
+                                  'Add',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ))
+                          ],
+                        );
+                      });
+
+                  if (res == null) return;
+                  if (res == true) {
+                    BotToast.showLoading(
+                        allowClick: false,
+                        clickClose: false,
+                        backButtonBehavior: BackButtonBehavior.ignore);
+                    await authProvider.addPersonAsFriend(user['uid']);
+                    BotToast.closeAllLoading();
+                  }
                 },
                 borderRadius: BorderRadius.circular(10),
                 child: Padding(

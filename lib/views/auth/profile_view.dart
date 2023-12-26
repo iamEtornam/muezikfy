@@ -14,7 +14,7 @@ import 'package:muezikfy/shared_widgets/custom_bottomsheet.dart';
 import 'package:muezikfy/shared_widgets/custom_buttons.dart';
 import 'package:muezikfy/shared_widgets/custom_progress_indicator.dart';
 import 'package:muezikfy/shared_widgets/custom_textfield.dart';
-import 'package:muezikfy/utilities/custom_colors.dart';
+import 'package:muezikfy/utilities/color_schemes.dart';
 import 'package:provider/provider.dart';
 
 class ProfileView extends StatefulWidget {

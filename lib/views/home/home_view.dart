@@ -15,7 +15,7 @@ import 'package:muezikfy/services/songs_persistence_service.dart';
 import 'package:muezikfy/shared_widgets/custom_progress_indicator.dart';
 import 'package:muezikfy/shared_widgets/song_list_tile.dart';
 import 'package:muezikfy/shared_widgets/status_friends_widget.dart';
-import 'package:muezikfy/utilities/custom_colors.dart';
+import 'package:muezikfy/utilities/color_schemes.dart';
 import 'package:muezikfy/utilities/ui_util.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
