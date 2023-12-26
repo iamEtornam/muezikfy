@@ -1,101 +1,124 @@
-// To parse this JSON data, do
-//
-//     final song = songFromMap(jsonString);
-
-import 'dart:convert';
-
-List<Song> songFromMap(String str) =>
-    List<Song>.from(json.decode(str).map((x) => Song.fromMap(x)));
-
-String songToMap(List<Song> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toMap())));
-
 class Song {
-  Song({
-    this.audioId,
-    this.data,
-    this.displayName,
-    this.artist,
-    this.album,
-    this.composer,
-    this.isMusic,
-    this.isRingtone,
-    this.title,
-    this.uri,
-    this.artistId,
-    this.isPodcast,
-    this.duration,
-    this.size,
-    this.isAlarm,
-    this.bookmark,
-    this.albumId,
-    this.isNotification,
-    this.track,
-  });
-
-  int? audioId;
-  String? data;
-  String? displayName;
+  String? sUri;
   String? artist;
-  String? album;
-  dynamic composer;
-  bool? isMusic;
-  bool? isRingtone;
+  int? year;
+  dynamic isMusic;
   String? title;
-  String? uri;
-  int? artistId;
-  bool? isPodcast;
+  dynamic genreId;
+  int? iSize;
   int? duration;
-  int? size;
-  bool? isAlarm;
-  dynamic bookmark;
-  int? albumId;
-  bool? isNotification;
+  dynamic isAlarm;
+  String? sDisplayNameWoExt;
+  String? albumArtist;
+  dynamic genre;
+  dynamic isNotification;
   int? track;
+  String? sData;
+  String? sDisplayName;
+  String? album;
+  String? composer;
+  dynamic isRingtone;
+  int? artistId;
+  dynamic isPodcast;
+  int? bookmark;
+  int? dateAdded;
+  dynamic isAudiobook;
+  int? dateModified;
+  int? albumId;
+  String? fileExtension;
+  int? iId;
 
-  factory Song.fromMap(Map<String, dynamic> json) => Song(
-        audioId: json["audioId"] == null ? null : json["audioId"],
-        data: json["_data"] == null ? null : json["_data"],
-        displayName:
-            json["_display_name"] == null ? null : json["_display_name"],
-        artist: json["artist"] == null ? null : json["artist"],
-        album: json["album"] == null ? null : json["album"],
-        composer: json["composer"],
-        isMusic: json["is_music"] == null ? null : json["is_music"],
-        isRingtone: json["is_ringtone"] == null ? null : json["is_ringtone"],
-        title: json["title"] == null ? null : json["title"],
-        uri: json["uri"] == null ? null : json["uri"],
-        artistId: json["artist_id"] == null ? null : json["artist_id"],
-        isPodcast: json["is_podcast"] == null ? null : json["is_podcast"],
-        duration: json["duration"] == null ? null : json["duration"],
-        size: json["_size"] == null ? null : json["_size"],
-        isAlarm: json["is_alarm"] == null ? null : json["is_alarm"],
-        bookmark: json["bookmark"],
-        albumId: json["album_id"] == null ? null : json["album_id"],
-        isNotification:
-            json["is_notification"] == null ? null : json["is_notification"],
-        track: json["track"] == null ? null : json["track"],
-      );
+  Song(
+      {this.sUri,
+      this.artist,
+      this.year,
+      this.isMusic,
+      this.title,
+      this.genreId,
+      this.iSize,
+      this.duration,
+      this.isAlarm,
+      this.sDisplayNameWoExt,
+      this.albumArtist,
+      this.genre,
+      this.isNotification,
+      this.track,
+      this.sData,
+      this.sDisplayName,
+      this.album,
+      this.composer,
+      this.isRingtone,
+      this.artistId,
+      this.isPodcast,
+      this.bookmark,
+      this.dateAdded,
+      this.isAudiobook,
+      this.dateModified,
+      this.albumId,
+      this.fileExtension,
+      this.iId});
 
-  Map<String, dynamic> toMap() => {
-        "audioId": audioId == null ? null : audioId,
-        "_data": data == null ? null : data,
-        "_display_name": displayName == null ? null : displayName,
-        "artist": artist == null ? null : artist,
-        "album": album == null ? null : album,
-        "composer": composer,
-        "is_music": isMusic == null ? null : isMusic,
-        "is_ringtone": isRingtone == null ? null : isRingtone,
-        "title": title == null ? null : title,
-        "uri": uri == null ? null : uri,
-        "artist_id": artistId == null ? null : artistId,
-        "is_podcast": isPodcast == null ? null : isPodcast,
-        "duration": duration == null ? null : duration,
-        "_size": size == null ? null : size,
-        "is_alarm": isAlarm == null ? null : isAlarm,
-        "bookmark": bookmark,
-        "album_id": albumId == null ? null : albumId,
-        "is_notification": isNotification == null ? null : isNotification,
-        "track": track == null ? null : track,
-      };
+  Song.fromJson(Map<String, dynamic> json) {
+    sUri = json['_uri'];
+    artist = json['artist'];
+    year = json['year'];
+    isMusic = json['is_music'];
+    title = json['title'];
+    genreId = json['genre_id'];
+    iSize = json['_size'];
+    duration = json['duration'];
+    isAlarm = json['is_alarm'];
+    sDisplayNameWoExt = json['_display_name_wo_ext'];
+    albumArtist = json['album_artist'];
+    genre = json['genre'];
+    isNotification = json['is_notification'];
+    track = json['track'];
+    sData = json['_data'];
+    sDisplayName = json['_display_name'];
+    album = json['album'];
+    composer = json['composer'];
+    isRingtone = json['is_ringtone'];
+    artistId = json['artist_id'];
+    isPodcast = json['is_podcast'];
+    bookmark = json['bookmark'];
+    dateAdded = json['date_added'];
+    isAudiobook = json['is_audiobook'];
+    dateModified = json['date_modified'];
+    albumId = json['album_id'];
+    fileExtension = json['file_extension'];
+    iId = json['_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_uri'] = this.sUri;
+    data['artist'] = this.artist;
+    data['year'] = this.year;
+    data['is_music'] = this.isMusic;
+    data['title'] = this.title;
+    data['genre_id'] = this.genreId;
+    data['_size'] = this.iSize;
+    data['duration'] = this.duration;
+    data['is_alarm'] = this.isAlarm;
+    data['_display_name_wo_ext'] = this.sDisplayNameWoExt;
+    data['album_artist'] = this.albumArtist;
+    data['genre'] = this.genre;
+    data['is_notification'] = this.isNotification;
+    data['track'] = this.track;
+    data['_data'] = this.sData;
+    data['_display_name'] = this.sDisplayName;
+    data['album'] = this.album;
+    data['composer'] = this.composer;
+    data['is_ringtone'] = this.isRingtone;
+    data['artist_id'] = this.artistId;
+    data['is_podcast'] = this.isPodcast;
+    data['bookmark'] = this.bookmark;
+    data['date_added'] = this.dateAdded;
+    data['is_audiobook'] = this.isAudiobook;
+    data['date_modified'] = this.dateModified;
+    data['album_id'] = this.albumId;
+    data['file_extension'] = this.fileExtension;
+    data['_id'] = this.iId;
+    return data;
+  }
 }

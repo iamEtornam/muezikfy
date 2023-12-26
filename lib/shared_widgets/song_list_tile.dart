@@ -9,9 +9,11 @@ class SongListTile extends StatefulWidget {
   final String songDuration;
   final Function onTap;
   final bool isSelected;
+  final bool isPlaying;
   const SongListTile({
     Key? key,
     required this.isSelected,
+    required this.isPlaying,
     required this.onTap,
     this.songCover,
     required this.songTitle,
@@ -62,7 +64,7 @@ class _SongListTileState extends State<SongListTile> {
                               .scaffoldBackgroundColor
                               .withOpacity(.3),
                           child: Icon(
-                            widget.isSelected ? Icons.pause : Icons.play_arrow,
+                            widget.isPlaying ? Icons.pause : Icons.play_arrow,
                             color: colorMain,
                           ),
                         )

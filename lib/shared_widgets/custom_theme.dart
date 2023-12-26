@@ -121,7 +121,7 @@ class CustomTheme {
                   )
                   .titleLarge),
       textSelectionTheme: TextSelectionThemeData(cursorColor: colorMain),
-      colorScheme: ColorScheme.fromSwatch().copyWith(secondary: colorMain),
+      colorScheme: ColorScheme.fromSwatch().copyWith(secondary: colorMain, brightness: Brightness.light),
     );
   }
 
@@ -243,7 +243,7 @@ class CustomTheme {
               )
               .titleLarge),
       textSelectionTheme: TextSelectionThemeData(cursorColor: colorMain),
-      colorScheme: ColorScheme.fromSwatch().copyWith(secondary: colorMain),
+      colorScheme: ColorScheme.fromSwatch().copyWith(secondary: colorMain, brightness: Brightness.dark),
     );
   }
 }

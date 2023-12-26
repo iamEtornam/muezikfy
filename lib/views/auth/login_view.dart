@@ -4,7 +4,9 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
+import 'package:muezikfy/routes.dart';
 import 'package:muezikfy/utilities/ui_util.dart';
 import 'package:provider/provider.dart';
 
@@ -59,9 +61,8 @@ class _LoginViewState extends State<LoginView> {
                         alertNotification(
                             message: 'Welcome to Muezikfy...',
                             context: context);
-                        Future.delayed(Duration(seconds: 5), () {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/homeView', (route) => false);
+                        Future.delayed(Duration(seconds: 3), () {
+                          context.goNamed(RoutesName.home);
                         });
                       } else {
                         alertNotification(
@@ -110,9 +111,8 @@ class _LoginViewState extends State<LoginView> {
                               alertNotification(
                                   message: 'Welcome to Muezikfy...',
                                   context: context);
-                              Future.delayed(Duration(seconds: 5), () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context, '/homeView', (route) => false);
+                              Future.delayed(Duration(seconds: 3), () {
+                                context.goNamed(RoutesName.home);
                               });
                             } else {
                               alertNotification(

@@ -1,10 +1,41 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:muezikfy/models/song.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SongsPersistenceService {
   static const tableSongs = """
-  CREATE TABLE IF NOT EXISTS my_songs(_id INTEGER PRIMARY KEY, _data TEXT, album_artwork TEXT, _display_name TEXT, artist TEXT, year TEXT, album TEXT, composer TEXT, is_music BOOLEAN, is_ringtone BOOLEAN, title TEXT, uri TEXT, artist_id TEXT, is_podcast BOOLEAN, duration TEXT, _size TEXT, is_alarm BOOLEAN, bookmark TEXT, album_id TEXT, is_notification BOOLEAN, track TEXT);""";
+  CREATE TABLE IF NOT EXISTS my_songs(_id BIGINT PRIMARY KEY,
+    _uri VARCHAR(255),
+    artist VARCHAR(255),
+    year INT,
+    is_music BOOLEAN,
+    title VARCHAR(255),
+    genre_id BIGINT,
+    _size BIGINT,
+    duration INT,
+    is_alarm BOOLEAN,
+    _display_name_wo_ext VARCHAR(255),
+    album_artist VARCHAR(255),
+    genre VARCHAR(255),
+    is_notification BOOLEAN,
+    track INT,
+    _data VARCHAR(255),
+    _display_name VARCHAR(255),
+    album VARCHAR(255),
+    composer VARCHAR(255),
+    is_ringtone BOOLEAN,
+    artist_id BIGINT,
+    is_podcast BOOLEAN,
+    bookmark INT,
+    date_added BIGINT,
+    is_audiobook BOOLEAN,
+    date_modified BIGINT,
+    album_id BIGINT,
+    file_extension VARCHAR(10));""";
 
   Future<Database> initialiseDatabase() async {
     final Future<Database> database =
@@ -15,34 +46,36 @@ class SongsPersistenceService {
     return database;
   }
 
-  Future<bool> insertSongs({required List<AudioModel> songs}) async {
+  Future<bool> insertSongs({required List<SongModel> songs}) async {
     Song song;
     final Database db = await initialiseDatabase();
     await db.execute('DELETE FROM my_songs');
     songs.forEach((element) {
       song = Song(
+          iId: element.id,
           album: element.album,
           albumId: element.albumId,
           artist: element.artist,
           artistId: element.artistId,
           bookmark: element.bookmark,
           composer: element.composer,
-          displayName: element.displayNameWOExt,
+          sDisplayNameWoExt: element.displayNameWOExt,
+          sDisplayName: element.displayName,
           duration: element.duration,
           isAlarm: element.isAlarm,
           isMusic: element.isMusic,
           isNotification: element.isNotification,
           isPodcast: element.isPodcast,
           isRingtone: element.isRingtone,
-          size: element.size,
+          iSize: element.size,
           title: element.title,
           track: element.track,
-          uri: element.uri,
-          data: element.data);
+          sUri: element.uri,
+          sData: element.data);
 
       db.insert(
         'my_songs',
-        song.toMap(),
+        song.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     });
@@ -50,31 +83,18 @@ class SongsPersistenceService {
   }
 
   Future<List<Song>> getAllSongs() async {
-    final Database db = await initialiseDatabase();
+    try {
+      final Database db = await initialiseDatabase();
 
-    final List<Map<String, dynamic>> maps = await db.query('my_songs');
-    return List.generate(
-        maps.length,
-        (index) => Song(
-              data: maps[index]['_data'],
-              album: maps[index]['album'],
-              albumId: maps[index]['album_id'],
-              artist: maps[index]['artist'],
-              artistId: maps[index]['artist_id'],
-              bookmark: maps[index]['bookmark'],
-              composer: maps[index]['composer'],
-              displayName: maps[index]['_display_name'],
-              duration: maps[index]['duration'],
-              isAlarm: maps[index]['is_alarm'] == 1 ? true : false,
-              isMusic: maps[index]['is_music'] == 1 ? true : false,
-              isNotification:
-                  maps[index]['is_notification'] == 1 ? true : false,
-              isPodcast: maps[index]['is_podcast'] == 1 ? true : false,
-              isRingtone: maps[index]['is_ringtone'] == 1 ? true : false,
-              size: maps[index]['_size'],
-              title: maps[index]['title'],
-              track: maps[index]['track'],
-              uri: maps[index]['uri'],
-            ));
+      final List<Map<String, dynamic>> maps = await db.query('my_songs');
+      return List.generate(maps.length, (index) => Song.fromJson(maps[index]));
+    } catch (e) {
+      return [];
+    }
+  }
+
+  deleteDatabase() async {
+    final Database db = await initialiseDatabase();
+    await db.database.delete('my_songs');
   }
 }

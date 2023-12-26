@@ -10,7 +10,7 @@ alertNotification(
       duration: Duration(seconds: duration),
       title: message,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      borderRadius: 10,
+      borderRadius: 10.0,
       align: Alignment.topCenter);
 }
 
