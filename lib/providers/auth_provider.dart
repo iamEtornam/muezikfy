@@ -88,6 +88,12 @@ class AuthProvider with ChangeNotifier {
   Stream<DocumentSnapshot<Map<String, dynamic>>> get getFriends =>
       _firestore.collection('persons').doc(currentUserId).snapshots();
 
+  Query<Map<String, dynamic>> get personsQuery => _firestore
+      .collection('persons')
+      .where('discoverable', isEqualTo: true)
+      .where('user_id', isNotEqualTo: currentUserId!)
+      ;
+
   Future<Person?> getUser() async {
     DocumentSnapshot<Map<String, dynamic>> snapshot =
         await _firestore.collection('persons').doc(currentUserId).get();
@@ -110,7 +116,8 @@ class AuthProvider with ChangeNotifier {
     return _firestore.collection('persons').doc(currentUserId).snapshots();
   }
 
-  Future<String> uploadPhoto({required Uint8List file, required String path}) async {
+  Future<String> uploadPhoto(
+      {required Uint8List file, required String path}) async {
     final storageRef = _firebaseStorage.ref();
 
     final fileName = path.split('/').last;
@@ -119,5 +126,11 @@ class AuthProvider with ChangeNotifier {
     await imageRef.putData(file);
     final downloadUrl = await imageRef.getDownloadURL();
     return downloadUrl;
+  }
+
+  Future<void> addPersonAsFriend(String friendId) {
+    return _firestore.collection('persons').doc(currentUserId).update({
+      'friends': FieldValue.arrayUnion([friendId])
+    });
   }
 }

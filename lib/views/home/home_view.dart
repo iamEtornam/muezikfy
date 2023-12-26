@@ -49,7 +49,7 @@ class _HomeViewState extends State<HomeView> {
       authProvider = Provider.of<AuthProvider>(context, listen: false);
       setState(() {});
       final person = await authProvider!.getUser();
-      if(!mounted) return;
+      if (!mounted) return;
       if (person == null) {
         GoRouter.of(context).goNamed(RoutesName.profile);
         return;
@@ -163,54 +163,113 @@ class _HomeViewState extends State<HomeView> {
               child: ListView(
                 controller: _scrollController,
                 children: [
-                  StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                      stream: authProvider!.getFriends,
-                      builder: (context, snapshot) {
-                        if(snapshot.connectionState == ConnectionState.waiting) {
-                          return const CustomProgressIndicator();
-                        }
-                        if (!snapshot.hasData) {
-                          return const SizedBox.shrink();
-                        }
-                        final friends = snapshot.data!.data()!['friends'];
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                              ),
-                              child: Text(
-                                'what are your friends listening to?',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(fontWeight: FontWeight.normal),
-                              ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 16),
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: () => context.pushNamed(RoutesName.personList),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 70,
+                                  height: 70,
+                                  decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: Colors.grey, width: 2)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: CircleAvatar(
+                                      radius: 33,
+                                      backgroundColor:
+                                          colorMain.withOpacity(.5),
+                                      backgroundImage:
+                                          const ExactAssetImage(Images.avatar),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                SizedBox(
+                                    width: 90,
+                                    child: Text(
+                                      'Add friends',
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall,
+                                    )),
+                              ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                left: 16,
-                                top: 6,
-                              ),
-                              child: SizedBox(
-                                height: 110,
-                                width: size.width,
-                                child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: friends.length,
-                                    itemBuilder: (context, index) =>
-                                        StatusFriendsWidget(
-                                          friendId: friends[index],
-                                        )),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                          ],
-                        );
-                      }),
+                          ),
+                        ),
+                        StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                            stream: authProvider!.getFriends,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CustomProgressIndicator();
+                              }
+                              if (!snapshot.hasData) {
+                                return const SizedBox.shrink();
+                              }
+                              final friends = snapshot.data?.data()?['friends'];
+
+                              if (friends == null) {
+                                return const SizedBox.shrink();
+                              }
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                    ),
+                                    child: Text(
+                                      'what are your friends listening to?',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .copyWith(
+                                              fontWeight: FontWeight.normal),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      left: 16,
+                                      top: 6,
+                                    ),
+                                    child: SizedBox(
+                                      height: 110,
+                                      width: size.width,
+                                      child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: friends.length,
+                                          itemBuilder: (context, index) =>
+                                              StatusFriendsWidget(
+                                                friendId: friends[index],
+                                              )),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                ],
+                              );
+                            }),
+                      ],
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 24,
@@ -331,7 +390,8 @@ class _HomeViewState extends State<HomeView> {
                                     blankSpace: 100.0,
                                     velocity: 100.0,
                                     pauseAfterRound: const Duration(seconds: 3),
-                                    accelerationDuration: const Duration(seconds: 2),
+                                    accelerationDuration:
+                                        const Duration(seconds: 2),
                                     accelerationCurve: Curves.linear,
                                     decelerationDuration:
                                         const Duration(milliseconds: 500),
@@ -361,7 +421,8 @@ class _HomeViewState extends State<HomeView> {
                             Row(
                               children: [
                                 IconButton(
-                                    icon: const Icon(Icons.skip_previous_rounded),
+                                    icon:
+                                        const Icon(Icons.skip_previous_rounded),
                                     onPressed: () {}),
                                 InkWell(
                                   onTap: () {

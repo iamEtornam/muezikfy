@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muezikfy/views/auth/login_view.dart';
 import 'package:muezikfy/views/auth/profile_view.dart';
+import 'package:muezikfy/views/friends/friends_list_view.dart';
 import 'package:muezikfy/views/home/home_view.dart';
 import 'package:muezikfy/views/intro/splash_view.dart';
 import 'package:muezikfy/views/playing/playing_view.dart';
@@ -15,6 +16,7 @@ class RoutesName {
   static const String playing = '/playing';
   static const String login = '/login';
   static const String profile = '/profile';
+  static const String personList = 'person-list';
 }
 
 final GoRouter router = GoRouter(
@@ -101,6 +103,23 @@ final GoRouter router = GoRouter(
                 return CustomTransitionPage(
                   key: state.pageKey,
                   child: const PlayingView(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(
+                      opacity: CurveTween(curve: Curves.easeInOutCirc)
+                          .animate(animation),
+                      child: child,
+                    );
+                  },
+                );
+              }),
+          GoRoute(
+              path: 'person-list',
+              name: RoutesName.personList,
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const FriendsListView(),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(
