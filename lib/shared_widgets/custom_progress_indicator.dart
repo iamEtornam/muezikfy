@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 class CustomProgressIndicator extends StatelessWidget {
   final double size;
 
-  const CustomProgressIndicator({Key? key, this.size = 45.0}) : super(key: key);
+  const CustomProgressIndicator({super.key, this.size = 45.0});
   @override
   Widget build(BuildContext context) {
     return Center(
         child: Platform.isIOS
-            ? CupertinoActivityIndicator()
+            ? const CupertinoActivityIndicator()
             : SizedBox(
-            width: size, height: size, child: CircularProgressIndicator()));
+            width: size, height: size, child: const CircularProgressIndicator()));
   }
 }

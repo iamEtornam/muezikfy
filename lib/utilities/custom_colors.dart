@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final Color colorMain = Colors.orange;
+const Color colorMain = Colors.orange;
 
 Color fromHex(String hexString) {
   final buffer = StringBuffer();

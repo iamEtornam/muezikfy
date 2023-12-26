@@ -31,7 +31,7 @@ final GoRouter router = GoRouter(
         pageBuilder: (BuildContext context, GoRouterState state) {
           return CustomTransitionPage(
             key: state.pageKey,
-            child: SplashView(),
+            child: const SplashView(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return FadeTransition(
@@ -48,7 +48,7 @@ final GoRouter router = GoRouter(
         pageBuilder: (BuildContext context, GoRouterState state) {
           return CustomTransitionPage(
             key: state.pageKey,
-            child: LoginView(),
+            child: const LoginView(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return FadeTransition(
@@ -65,7 +65,7 @@ final GoRouter router = GoRouter(
         pageBuilder: (BuildContext context, GoRouterState state) {
           return CustomTransitionPage(
             key: state.pageKey,
-            child: ProfileView(),
+            child: const ProfileView(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return FadeTransition(
@@ -82,7 +82,7 @@ final GoRouter router = GoRouter(
         pageBuilder: (BuildContext context, GoRouterState state) {
           return CustomTransitionPage(
             key: state.pageKey,
-            child: HomeView(),
+            child: const HomeView(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return FadeTransition(
@@ -100,7 +100,7 @@ final GoRouter router = GoRouter(
               pageBuilder: (BuildContext context, GoRouterState state) {
                 return CustomTransitionPage(
                   key: state.pageKey,
-                  child: PlayingView(),
+                  child: const PlayingView(),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(

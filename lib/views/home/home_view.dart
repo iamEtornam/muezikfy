@@ -22,10 +22,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
-  HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
 
   @override
-  _HomeViewState createState() => _HomeViewState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
@@ -49,6 +49,7 @@ class _HomeViewState extends State<HomeView> {
       authProvider = Provider.of<AuthProvider>(context, listen: false);
       setState(() {});
       final person = await authProvider!.getUser();
+      if(!mounted) return;
       if (person == null) {
         GoRouter.of(context).goNamed(RoutesName.profile);
         return;
@@ -75,7 +76,7 @@ class _HomeViewState extends State<HomeView> {
     final Size size = MediaQuery.of(context).size;
     log('player.playing ${player.playing}');
     return authProvider == null
-        ? Scaffold(body: CustomProgressIndicator())
+        ? const Scaffold(body: CustomProgressIndicator())
         : Scaffold(
             appBar: AppBar(
               title: Text(
@@ -86,9 +87,9 @@ class _HomeViewState extends State<HomeView> {
                     .copyWith(fontWeight: FontWeight.w600),
               ),
               actions: [
-                IconButton(icon: Icon(Icons.search), onPressed: () {}),
+                IconButton(icon: const Icon(Icons.search), onPressed: () {}),
                 IconButton(
-                    icon: Icon(Icons.logout_rounded),
+                    icon: const Icon(Icons.logout_rounded),
                     onPressed: () {
                       _songsPersistenceService.deleteDatabase();
                       authProvider!.signOut();
@@ -148,11 +149,11 @@ class _HomeViewState extends State<HomeView> {
                     onTap: () {
                       GoRouter.of(context).pushNamed(RoutesName.profile);
                     },
-                    leading: Icon(Icons.person),
-                    title: Text(
+                    leading: const Icon(Icons.person),
+                    title: const Text(
                       'Profile',
                     )),
-                Divider()
+                const Divider()
               ],
             )),
             body: RefreshIndicator.adaptive(
@@ -165,8 +166,11 @@ class _HomeViewState extends State<HomeView> {
                   StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                       stream: authProvider!.getFriends,
                       builder: (context, snapshot) {
+                        if(snapshot.connectionState == ConnectionState.waiting) {
+                          return const CustomProgressIndicator();
+                        }
                         if (!snapshot.hasData) {
-                          return SizedBox.shrink();
+                          return const SizedBox.shrink();
                         }
                         final friends = snapshot.data!.data()!['friends'];
                         return Column(
@@ -185,7 +189,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                 left: 16,
                                 top: 6,
                               ),
@@ -201,7 +205,7 @@ class _HomeViewState extends State<HomeView> {
                                         )),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 15,
                             ),
                           ],
@@ -225,13 +229,13 @@ class _HomeViewState extends State<HomeView> {
                         if (snapshot.connectionState ==
                                 ConnectionState.waiting &&
                             snapshot.data == null) {
-                          return CustomProgressIndicator();
+                          return const CustomProgressIndicator();
                         }
 
                         final songs = snapshot.data ?? [];
                         if (snapshot.connectionState == ConnectionState.done &&
                             songs.isEmpty) {
-                          return Center(
+                          return const Center(
                             child: Text('No songs found'),
                           );
                         }
@@ -239,7 +243,7 @@ class _HomeViewState extends State<HomeView> {
                         return ListView.separated(
                             key: _listViewKey,
                             controller: _scrollController,
-                            padding: EdgeInsets.fromLTRB(16, 10, 16, 24),
+                            padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               final song = songs[index];
@@ -262,7 +266,7 @@ class _HomeViewState extends State<HomeView> {
                                 },
                               );
                             },
-                            separatorBuilder: (_, __) => SizedBox(
+                            separatorBuilder: (_, __) => const SizedBox(
                                   height: 10,
                                 ),
                             itemCount: songs.length);
@@ -271,7 +275,7 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
             bottomNavigationBar: selectedSong == null
-                ? SizedBox()
+                ? const SizedBox()
                 : GestureDetector(
                     onTap: () => context.pushNamed(RoutesName.playing),
                     onVerticalDragStart: (details) =>
@@ -279,9 +283,9 @@ class _HomeViewState extends State<HomeView> {
                     child: Hero(
                       tag: 'to_playing',
                       child: AnimatedContainer(
-                        duration: Duration(milliseconds: 5000),
+                        duration: const Duration(milliseconds: 5000),
                         curve: Curves.easeInOut,
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         width: size.width,
                         height: 90,
                         decoration: BoxDecoration(
@@ -298,7 +302,7 @@ class _HomeViewState extends State<HomeView> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             ClipRRect(
@@ -309,7 +313,7 @@ class _HomeViewState extends State<HomeView> {
                                 size: 60,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Column(
@@ -326,11 +330,11 @@ class _HomeViewState extends State<HomeView> {
                                         CrossAxisAlignment.stretch,
                                     blankSpace: 100.0,
                                     velocity: 100.0,
-                                    pauseAfterRound: Duration(seconds: 3),
-                                    accelerationDuration: Duration(seconds: 2),
+                                    pauseAfterRound: const Duration(seconds: 3),
+                                    accelerationDuration: const Duration(seconds: 2),
                                     accelerationCurve: Curves.linear,
                                     decelerationDuration:
-                                        Duration(milliseconds: 500),
+                                        const Duration(milliseconds: 500),
                                     decelerationCurve: Curves.easeOut,
                                     style: Theme.of(context)
                                         .textTheme
@@ -353,11 +357,11 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                               ],
                             ),
-                            Spacer(),
+                            const Spacer(),
                             Row(
                               children: [
                                 IconButton(
-                                    icon: Icon(Icons.skip_previous_rounded),
+                                    icon: const Icon(Icons.skip_previous_rounded),
                                     onPressed: () {}),
                                 InkWell(
                                   onTap: () {
@@ -367,12 +371,6 @@ class _HomeViewState extends State<HomeView> {
                                   child: Container(
                                     width: 45,
                                     height: 45,
-                                    child: Icon(
-                                      player.playing
-                                          ? Icons.pause
-                                          : Icons.play_arrow,
-                                      color: Colors.white,
-                                    ),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(90),
                                         gradient: LinearGradient(
@@ -386,10 +384,16 @@ class _HomeViewState extends State<HomeView> {
                                               Colors.deepOrangeAccent,
                                               Colors.deepOrange,
                                             ])),
+                                    child: Icon(
+                                      player.playing
+                                          ? Icons.pause
+                                          : Icons.play_arrow,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                                 IconButton(
-                                    icon: Icon(Icons.skip_next),
+                                    icon: const Icon(Icons.skip_next),
                                     onPressed: () {}),
                               ],
                             )
@@ -436,9 +440,6 @@ class _HomeViewState extends State<HomeView> {
           duration = null;
         }
       });
-      print('*********************');
-      print(player.duration);
-      print(duration);
       setState(() {});
     } catch (e) {
       log('songPath error: $e');

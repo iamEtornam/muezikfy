@@ -11,10 +11,10 @@ import 'package:muezikfy/utilities/ui_util.dart';
 import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
-  LoginView({Key? key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
-  _LoginViewState createState() => _LoginViewState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
 class _LoginViewState extends State<LoginView> {
@@ -37,15 +37,15 @@ class _LoginViewState extends State<LoginView> {
                         .headlineSmall!
                         .copyWith(fontWeight: FontWeight.bold),
                   ),
-                  Spacer(),
-                  FlutterLogo(
+                  const Spacer(),
+                  const FlutterLogo(
                     size: 120,
                   ),
-                  Spacer(),
+                  const Spacer(),
                   TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.white,
-                      padding: EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(15),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(45)),
                     ),
@@ -57,11 +57,12 @@ class _LoginViewState extends State<LoginView> {
                       bool isSuccessful =
                           await authenticationProvider.signInWithGoogle();
                       BotToast.closeAllLoading();
+                      if (!mounted) return;
                       if (isSuccessful) {
                         alertNotification(
                             message: 'Welcome to Muezikfy...',
                             context: context);
-                        Future.delayed(Duration(seconds: 3), () {
+                        Future.delayed(const Duration(seconds: 3), () {
                           context.goNamed(RoutesName.home);
                         });
                       } else {
@@ -79,7 +80,7 @@ class _LoginViewState extends State<LoginView> {
                           width: 35,
                           height: 35,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
@@ -89,14 +90,14 @@ class _LoginViewState extends State<LoginView> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Platform.isIOS
                       ? TextButton(
                           style: TextButton.styleFrom(
-                              backgroundColor: Color(0xFF000000),
-                              padding: EdgeInsets.all(15),
+                              backgroundColor: const Color(0xFF000000),
+                              padding: const EdgeInsets.all(15),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(45))),
                           onPressed: () async {
@@ -107,11 +108,13 @@ class _LoginViewState extends State<LoginView> {
                             bool isSuccessful =
                                 await authenticationProvider.signInWithApple();
                             BotToast.closeAllLoading();
+                            if (!mounted) return;
+
                             if (isSuccessful) {
                               alertNotification(
                                   message: 'Welcome to Muezikfy...',
                                   context: context);
-                              Future.delayed(Duration(seconds: 3), () {
+                              Future.delayed(const Duration(seconds: 3), () {
                                 context.goNamed(RoutesName.home);
                               });
                             } else {
@@ -124,11 +127,11 @@ class _LoginViewState extends State<LoginView> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              const Icon(
                                 AntDesign.apple1,
                                 color: Colors.white,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               Text(
@@ -141,8 +144,8 @@ class _LoginViewState extends State<LoginView> {
                             ],
                           ),
                         )
-                      : SizedBox(),
-                  SizedBox(
+                      : const SizedBox(),
+                  const SizedBox(
                     height: 25,
                   ),
                 ],

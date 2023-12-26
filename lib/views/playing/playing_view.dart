@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class PlayingView extends StatefulWidget {
-  PlayingView({Key? key}) : super(key: key);
+  const PlayingView({super.key});
 
   @override
-  _PlayingViewState createState() => _PlayingViewState();
+  State<PlayingView> createState() => _PlayingViewState();
 }
 
 class _PlayingViewState extends State<PlayingView> {
@@ -21,7 +21,7 @@ class _PlayingViewState extends State<PlayingView> {
                 .titleLarge!
                 .copyWith(fontWeight: FontWeight.w600),
           ),
-          actions: [IconButton(icon: Icon(Icons.more_vert), onPressed: () {})],
+          actions: [IconButton(icon: const Icon(Icons.more_vert), onPressed: () {})],
         ),
       ),
     );

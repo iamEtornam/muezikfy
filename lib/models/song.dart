@@ -90,35 +90,35 @@ class Song {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_uri'] = this.sUri;
-    data['artist'] = this.artist;
-    data['year'] = this.year;
-    data['is_music'] = this.isMusic;
-    data['title'] = this.title;
-    data['genre_id'] = this.genreId;
-    data['_size'] = this.iSize;
-    data['duration'] = this.duration;
-    data['is_alarm'] = this.isAlarm;
-    data['_display_name_wo_ext'] = this.sDisplayNameWoExt;
-    data['album_artist'] = this.albumArtist;
-    data['genre'] = this.genre;
-    data['is_notification'] = this.isNotification;
-    data['track'] = this.track;
-    data['_data'] = this.sData;
-    data['_display_name'] = this.sDisplayName;
-    data['album'] = this.album;
-    data['composer'] = this.composer;
-    data['is_ringtone'] = this.isRingtone;
-    data['artist_id'] = this.artistId;
-    data['is_podcast'] = this.isPodcast;
-    data['bookmark'] = this.bookmark;
-    data['date_added'] = this.dateAdded;
-    data['is_audiobook'] = this.isAudiobook;
-    data['date_modified'] = this.dateModified;
-    data['album_id'] = this.albumId;
-    data['file_extension'] = this.fileExtension;
-    data['_id'] = this.iId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['_uri'] = sUri;
+    data['artist'] = artist;
+    data['year'] = year;
+    data['is_music'] = isMusic;
+    data['title'] = title;
+    data['genre_id'] = genreId;
+    data['_size'] = iSize;
+    data['duration'] = duration;
+    data['is_alarm'] = isAlarm;
+    data['_display_name_wo_ext'] = sDisplayNameWoExt;
+    data['album_artist'] = albumArtist;
+    data['genre'] = genre;
+    data['is_notification'] = isNotification;
+    data['track'] = track;
+    data['_data'] = sData;
+    data['_display_name'] = sDisplayName;
+    data['album'] = album;
+    data['composer'] = composer;
+    data['is_ringtone'] = isRingtone;
+    data['artist_id'] = artistId;
+    data['is_podcast'] = isPodcast;
+    data['bookmark'] = bookmark;
+    data['date_added'] = dateAdded;
+    data['is_audiobook'] = isAudiobook;
+    data['date_modified'] = dateModified;
+    data['album_id'] = albumId;
+    data['file_extension'] = fileExtension;
+    data['_id'] = iId;
     return data;
   }
 }

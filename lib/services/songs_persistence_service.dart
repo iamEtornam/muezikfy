@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:muezikfy/models/song.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path/path.dart';
@@ -50,7 +47,7 @@ class SongsPersistenceService {
     Song song;
     final Database db = await initialiseDatabase();
     await db.execute('DELETE FROM my_songs');
-    songs.forEach((element) {
+    for (var element in songs) {
       song = Song(
           iId: element.id,
           album: element.album,
@@ -78,7 +75,7 @@ class SongsPersistenceService {
         song.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-    });
+    }
     return true;
   }
 

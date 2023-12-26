@@ -11,7 +11,7 @@ class SongListTile extends StatefulWidget {
   final bool isSelected;
   final bool isPlaying;
   const SongListTile({
-    Key? key,
+    super.key,
     required this.isSelected,
     required this.isPlaying,
     required this.onTap,
@@ -19,10 +19,10 @@ class SongListTile extends StatefulWidget {
     required this.songTitle,
     required this.songArtise,
     required this.songDuration,
-  }) : super(key: key);
+  });
 
   @override
-  _SongListTileState createState() => _SongListTileState();
+  State<SongListTile> createState() => _SongListTileState();
 }
 
 class _SongListTileState extends State<SongListTile> {
@@ -71,7 +71,7 @@ class _SongListTileState extends State<SongListTile> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   Column(
@@ -106,7 +106,7 @@ class _SongListTileState extends State<SongListTile> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Text(

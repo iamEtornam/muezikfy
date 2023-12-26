@@ -7,6 +7,7 @@ class Person {
   final String email;
   final String createdAt;
   final String userId;
+  final bool discoverable;
 
   String get username => '${firstName.toLowerCase()}.${lastName.toLowerCase()}';
 
@@ -17,6 +18,7 @@ class Person {
     required this.email,
     required this.createdAt,
     required this.userId,
+    required this.discoverable,
   });
 
   Person copyWith({
@@ -26,6 +28,7 @@ class Person {
     String? email,
     String? createdAt,
     String? userId,
+    bool? discoverable,
   }) =>
       Person(
         firstName: firstName ?? this.firstName,
@@ -34,6 +37,7 @@ class Person {
         email: email ?? this.email,
         createdAt: createdAt ?? this.createdAt,
         userId: userId ?? this.userId,
+        discoverable: discoverable ?? this.discoverable,
       );
 
   factory Person.fromRawJson(String str) => Person.fromJson(json.decode(str));
@@ -47,6 +51,7 @@ class Person {
         email: json["email"],
         createdAt: json["created_at"],
         userId: json["user_id"],
+        discoverable: json["discoverable"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -56,5 +61,6 @@ class Person {
         "email": email,
         "created_at": createdAt,
         "user_id": userId,
+        "discoverable": discoverable,
       };
 }

@@ -9,9 +9,9 @@ import 'package:provider/provider.dart';
 class StatusFriendsWidget extends StatelessWidget {
   final String friendId;
   const StatusFriendsWidget({
-    Key? key,
+    super.key,
     required this.friendId,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +20,10 @@ class StatusFriendsWidget extends StatelessWidget {
             .getFriendProfile(friendId),
         builder: (context, snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting && snapshot.data == null) {
-            return CustomProgressIndicator();
+            return const CustomProgressIndicator();
           }
           if (snapshot.data?.exists == false) {
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           }
           final data = snapshot.data?.data();
           return InkWell(
@@ -51,7 +51,7 @@ class StatusFriendsWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 6,
                   ),
                   SizedBox(
