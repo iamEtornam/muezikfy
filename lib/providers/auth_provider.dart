@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:muezikfy/models/person.dart';
@@ -7,6 +10,7 @@ import 'package:muezikfy/models/person.dart';
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
   Future<bool> signInWithApple() async {
     bool isSuccessful = false;
@@ -17,7 +21,6 @@ class AuthProvider with ChangeNotifier {
       final firebaseUser = authResult.user;
       isSuccessful = firebaseUser != null;
     } catch (e) {
-      print(e);
       isSuccessful = false;
     }
     return isSuccessful;
@@ -54,11 +57,11 @@ class AuthProvider with ChangeNotifier {
         email: email!,
         createdAt: DateTime.now().toString(),
         userId: user!.uid,
+        discoverable: true,
       ));
 
-      isSuccessful = user != null;
+      isSuccessful = true;
     } catch (e) {
-      print(e);
       isSuccessful = false;
     }
     return isSuccessful;
@@ -82,7 +85,8 @@ class AuthProvider with ChangeNotifier {
 
   String? get currentPhoneNumber => _firebaseAuth.currentUser?.phoneNumber;
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> get getFriends => _firestore.collection('persons').doc(currentUserId).snapshots();
+  Stream<DocumentSnapshot<Map<String, dynamic>>> get getFriends =>
+      _firestore.collection('persons').doc(currentUserId).snapshots();
 
   Future<Person?> getUser() async {
     DocumentSnapshot<Map<String, dynamic>> snapshot =
@@ -101,7 +105,19 @@ class AuthProvider with ChangeNotifier {
         .set(person.toJson(), SetOptions(merge: true));
   }
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>>  getFriendProfile(String friendId) {
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getFriendProfile(
+      String friendId) {
     return _firestore.collection('persons').doc(currentUserId).snapshots();
+  }
+
+  Future<String> uploadPhoto({required Uint8List file, required String path}) async {
+    final storageRef = _firebaseStorage.ref();
+
+    final fileName = path.split('/').last;
+
+    final imageRef = storageRef.child(fileName);
+    await imageRef.putData(file);
+    final downloadUrl = await imageRef.getDownloadURL();
+    return downloadUrl;
   }
 }
