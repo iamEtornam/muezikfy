@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
 import 'package:muezikfy/models/song.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
@@ -84,7 +86,19 @@ class _PlayerPageState extends State<_PlayerPage>
   void playSong() async {
     try {
       log('songPath: ${widget.song.sUri}');
-      duration = await authProvider!.audioPlayer.setUrl(widget.song.sUri!);
+
+      final audioSource = AudioSource.uri(
+        Uri.parse(widget.song.sUri!),
+        tag: MediaItem(
+          // Specify a unique ID for each media item:
+          id: widget.song.iId.toString(),
+          // Metadata to display in the notification:
+          album: widget.song.album ?? 'unknown',
+          title: widget.song.title ?? 'unknown',
+          artUri: Uri.parse(widget.song.sUri ?? defaultArtWork),
+        ),
+      );
+      duration = await authProvider!.audioPlayer.setAudioSource(audioSource);
       log('duration: $duration');
 
       if (authProvider!.audioPlayer.playing) {
@@ -134,6 +148,9 @@ class _PlayerPageState extends State<_PlayerPage>
               artworkHeight: MediaQuery.of(context).size.height / 2,
               artworkWidth: MediaQuery.of(context).size.width,
               size: MediaQuery.of(context).size.height ~/ 2,
+              errorBuilder: (p0, p1, p2) {
+                return CachedNetworkImage(imageUrl: defaultArtWork);
+              },
             ),
           ),
         ),
