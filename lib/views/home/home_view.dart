@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
 import 'package:muezikfy/models/song.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
@@ -533,7 +534,18 @@ class _HomeViewState extends State<HomeView> {
   void playSong({required String songPath}) async {
     try {
       log('songPath: $songPath');
-      duration = await authProvider!.audioPlayer.setFilePath(songPath);
+      final audioSource = AudioSource.file(
+        songPath,
+        tag: MediaItem(
+          // Specify a unique ID for each media item:
+          id: selectedSong!.iId.toString(),
+          // Metadata to display in the notification:
+          album: selectedSong?.album ?? 'unknown',
+          title: selectedSong?.title ?? 'unknown',
+          artUri: Uri.parse(selectedSong?.sUri ?? defaultArtWork),
+        ),
+      );
+      duration = await authProvider!.audioPlayer.setAudioSource(audioSource);
       log('duration: $duration');
 
       if (authProvider!.audioPlayer.playing) {
