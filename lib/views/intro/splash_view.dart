@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:muezikfy/resources/resources.dart';
 import 'package:muezikfy/routes.dart';
 import 'package:muezikfy/shared_widgets/custom_progress_indicator.dart';
 
@@ -34,12 +35,14 @@ class _SplashViewState extends State<SplashView> {
   @override
   Widget build(BuildContext context) {
     buildContext = context;
-    return const Scaffold(
+    return Scaffold(
       body: Column(
         children: [
-          Spacer(),
-          CustomProgressIndicator(),
-          SizedBox(
+          const Spacer(),
+          Image.asset(Images.appstore, height: 100, width: 100),
+          const Spacer(),
+          const CustomProgressIndicator(),
+          const SizedBox(
             height: 24,
           )
         ],

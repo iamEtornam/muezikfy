@@ -6,6 +6,7 @@ import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
+import 'package:muezikfy/resources/resources.dart';
 import 'package:muezikfy/routes.dart';
 import 'package:muezikfy/utilities/ui_util.dart';
 import 'package:provider/provider.dart';
@@ -38,9 +39,7 @@ class _LoginViewState extends State<LoginView> {
                         .copyWith(fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
-                  const FlutterLogo(
-                    size: 120,
-                  ),
+                  Image.asset(Images.appstore, height: 120, width: 120),
                   const Spacer(),
                   TextButton(
                     style: TextButton.styleFrom(
