@@ -32,6 +32,7 @@ dependencies:
   cached_network_image: ^3.3.0
   zoom_tap_animation: ^1.1.0
   firebase_storage: ^11.5.6
+  flutter_native_splash: ^2.3.7
 
 
 dev_dependencies:
@@ -42,3 +43,11 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+
+flutter_native_splash:
+  color: "#000000"
+  fullscreen: false
+  image: "assets/splash.jpg"
+  android_gravity: fill
+  ios_content_mode: scaleToFill
+  web_image_mode: cover
