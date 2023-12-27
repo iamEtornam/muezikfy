@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:muezikfy/utilities/color_schemes.dart';
+import 'package:muezikfy/models/song.dart';
+import 'package:muezikfy/providers/auth_provider.dart';
+import 'package:muezikfy/utilities/ui_util.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class SongListTile extends StatefulWidget {
-  final int? songCover;
-  final String songTitle;
-  final String songArtise;
-  final String songDuration;
+  final Song song;
   final Function onTap;
   final bool isSelected;
   final bool isPlaying;
+  final AuthProvider authProvider;
   const SongListTile({
     super.key,
     required this.isSelected,
     required this.isPlaying,
     required this.onTap,
-    this.songCover,
-    required this.songTitle,
-    required this.songArtise,
-    required this.songDuration,
+    required this.song,
+    required this.authProvider,
   });
 
   @override
@@ -48,27 +46,41 @@ class _SongListTileState extends State<SongListTile> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Stack(
-                      children: [
-                        QueryArtworkWidget(
-                          id: widget.songCover ?? 0,
-                          type: ArtworkType.AUDIO,
-                          size: 60,
-                        ),
-                        Container(
-                          width: 60,
-                          height: 60,
-                          color: Theme.of(buildContext)
-                              .scaffoldBackgroundColor
-                              .withOpacity(.3),
-                          child: Icon(
-                            widget.isPlaying ? Icons.pause : Icons.play_arrow,
-                            color: colorMain,
+                  SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: QueryArtworkWidget(
+                              id: widget.song.iId!,
+                              type: ArtworkType.AUDIO,
+                              size: 60,
+                            ),
                           ),
-                        )
-                      ],
+                          Container(
+                            width: 60,
+                            height: 60,
+                            color: Theme.of(buildContext)
+                                .scaffoldBackgroundColor
+                                .withOpacity(.3),
+                            child: widget.isSelected
+                                ? Icon(
+                                    widget.authProvider.audioPlayer.isStopped()
+                                        ? Icons.stop
+                                        : widget.isPlaying
+                                            ? Icons.pause
+                                            : Icons.play_arrow,
+                                  )
+                                : const Icon(
+                                    Icons.play_arrow,
+                                  ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -81,7 +93,7 @@ class _SongListTileState extends State<SongListTile> {
                       SizedBox(
                         width: MediaQuery.of(buildContext).size.width - 210,
                         child: Text(
-                          widget.songTitle,
+                          widget.song.title ?? 'Unknown',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(buildContext)
@@ -93,7 +105,7 @@ class _SongListTileState extends State<SongListTile> {
                       SizedBox(
                         width: MediaQuery.of(buildContext).size.width - 210,
                         child: Text(
-                          widget.songArtise,
+                          widget.song.artist ?? 'Unknown',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(buildContext)
@@ -109,13 +121,21 @@ class _SongListTileState extends State<SongListTile> {
               const SizedBox(
                 width: 10,
               ),
-              Text(
-                widget.songDuration,
-                style: Theme.of(buildContext)
-                    .textTheme
-                    .titleSmall!
-                    .copyWith(fontWeight: FontWeight.w600),
-              ),
+              StreamBuilder<Duration>(
+                  stream: widget.authProvider.audioPlayer.positionStream,
+                  builder: (context, snapshot) {
+                    final currentDuration = (widget.isSelected)
+                        ? parseToMinutesSeconds(
+                            snapshot.data?.inMilliseconds ?? 0)
+                        : parseToMinutesSeconds(widget.song.duration ?? 0);
+                    return Text(
+                      currentDuration,
+                      style: Theme.of(buildContext)
+                          .textTheme
+                          .titleSmall!
+                          .copyWith(fontWeight: FontWeight.w600),
+                    );
+                  }),
             ],
           ),
         ),

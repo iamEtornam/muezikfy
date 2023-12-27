@@ -18,7 +18,7 @@ Future<void> main() async {
     androidNotificationChannelId: 'dev.etornam.muezikfy.channel.audio',
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
-    
+    preloadArtwork: true,
   );
   runApp(const MyApp());
 }

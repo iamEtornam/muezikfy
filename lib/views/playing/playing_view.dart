@@ -8,6 +8,7 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
 import 'package:muezikfy/models/song.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
+import 'package:muezikfy/utilities/color_schemes.dart';
 import 'package:muezikfy/utilities/ui_util.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
@@ -55,14 +56,13 @@ class _PlayerPage extends StatefulWidget {
 class _PlayerPageState extends State<_PlayerPage>
     with SingleTickerProviderStateMixin {
   AuthProvider? authProvider;
-  double _volumeValue = 0.0;
   late AnimationController _animationController;
 
   AnimatedIconData _animatedIcon = AnimatedIcons.pause_play;
   Duration? duration;
 
   void iconState() {
-    if (authProvider!.audioPlayer.playing) {
+    if (authProvider!.audioPlayer.isPlaying()) {
       _animationController.forward();
       setState(() {
         _animatedIcon = AnimatedIcons.pause_play;
@@ -87,7 +87,8 @@ class _PlayerPageState extends State<_PlayerPage>
     try {
       log('songPath: ${widget.song.sUri}');
 
-      final audioSource = AudioSource.uri(
+      List<AudioSource> audioSource = [];
+      audioSource.add(AudioSource.uri(
         Uri.parse(widget.song.sUri!),
         tag: MediaItem(
           // Specify a unique ID for each media item:
@@ -97,22 +98,27 @@ class _PlayerPageState extends State<_PlayerPage>
           title: widget.song.title ?? 'unknown',
           artUri: Uri.parse(widget.song.sUri ?? defaultArtWork),
         ),
-      );
+      ));
+
       duration = await authProvider!.audioPlayer.setAudioSource(audioSource);
       log('duration: $duration');
 
-      if (authProvider!.audioPlayer.playing) {
+      if (authProvider!.audioPlayer.isPlaying()) {
         _animationController.forward();
         setState(() {
           _animatedIcon = AnimatedIcons.pause_play;
         });
-        authProvider!.audioPlayer.stop();
+        authProvider!.audioPlayer.stopAudio();
         await authProvider!.removeNowPlaying(widget.song);
-      } else {
+      } else if (authProvider!.audioPlayer.isPaused()) {
         _animationController.reverse();
         setState(() {});
-        authProvider!.audioPlayer.play();
+        authProvider!.audioPlayer.playAudio();
         await authProvider!.saveNowPlaying(widget.song);
+      } else {
+        setState(() {});
+        authProvider!.audioPlayer.stopAudio();
+        await authProvider!.removeNowPlaying(widget.song);
       }
 
       authProvider!.audioPlayer.playerStateStream.listen((state) {
@@ -123,6 +129,22 @@ class _PlayerPageState extends State<_PlayerPage>
       setState(() {});
     } catch (e) {
       log('songPath error: $e');
+    }
+  }
+
+  void previous() async {
+    if (authProvider!.audioPlayer.hasPrevious) {
+      authProvider!.audioPlayer.stopAudio();
+      await authProvider!.audioPlayer.previous;
+      playSong();
+    }
+  }
+
+  void next() async {
+    if (authProvider!.audioPlayer.hasNext) {
+      authProvider!.audioPlayer.stopAudio();
+      await authProvider!.audioPlayer.next;
+      playSong();
     }
   }
 
@@ -176,23 +198,23 @@ class _PlayerPageState extends State<_PlayerPage>
     return StreamBuilder<Duration>(
         stream: authProvider!.audioPlayer.positionStream,
         builder: (context, snapshot) {
+          final currentPosition = calculateScaleValue(
+              (snapshot.data?.inMilliseconds ?? 0),
+              (authProvider!.audioPlayer.duration?.inMilliseconds ?? 100),
+              100);
           return Column(
             children: <Widget>[
               Slider(
                 onChanged: (val) async {
                   await authProvider!.audioPlayer
-                      .seek(Duration(milliseconds: val.toInt()));
+                      .seekAudio(Duration(milliseconds: val.toInt()));
 
-                  setState(() {});
+               
                 },
-                value: calculateScaleValue(
-                    (snapshot.data?.inMilliseconds ?? 0),
-                    (authProvider!.audioPlayer.duration?.inMilliseconds ?? 100),
-                    100),
+                value: double.parse(currentPosition.toStringAsFixed(1)),
                 max: 100.0,
                 min: 0.0,
-                activeColor: Colors.black,
-                divisions: 2,
+                activeColor: colorMain,
                 inactiveColor: Colors.black38,
               ),
               Row(
@@ -233,13 +255,14 @@ class _PlayerPageState extends State<_PlayerPage>
       children: <Widget>[
         SizedBox(
           height: 25,
+          width: MediaQuery.sizeOf(context).width,
           child: Marquee(
             text: widget.song.title ?? 'Unknown',
             scrollAxis: Axis.horizontal,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             blankSpace: 100.0,
             velocity: 100.0,
-            pauseAfterRound: const Duration(seconds: 3),
+            pauseAfterRound: const Duration(seconds: 0),
             accelerationDuration: const Duration(seconds: 2),
             accelerationCurve: Curves.linear,
             decelerationDuration: const Duration(milliseconds: 500),
@@ -268,14 +291,9 @@ class _PlayerPageState extends State<_PlayerPage>
           children: <Widget>[
             const Spacer(),
             IconButton(
-              onPressed: () async {
-                if (authProvider!.audioPlayer.hasPrevious) {
-                  await authProvider!.audioPlayer.seekToPrevious();
-                }
-              },
+              onPressed: previous,
               icon: const Icon(
                 Icons.fast_rewind,
-                color: Colors.black,
                 size: 50.0,
               ),
             ),
@@ -288,26 +306,25 @@ class _PlayerPageState extends State<_PlayerPage>
                 onPressed: () {
                   playSong();
                 },
-                icon: AnimatedIcon(
-                  progress: _animationController,
-                  icon: _animatedIcon,
-                  color: Colors.black,
-                  size: 60.0,
-                ),
+                icon: authProvider!.audioPlayer.isStopped()
+                    ? const Icon(
+                        Icons.stop,
+                        size: 60.0,
+                      )
+                    : AnimatedIcon(
+                        progress: _animationController,
+                        icon: _animatedIcon,
+                        size: 60.0,
+                      ),
               ),
             ),
             const SizedBox(
               width: 15.0,
             ),
             IconButton(
-              onPressed: () async {
-                if (authProvider!.audioPlayer.hasNext) {
-                  await authProvider!.audioPlayer.seekToNext();
-                }
-              },
+              onPressed: next,
               icon: const Icon(
                 Icons.fast_forward,
-                color: Colors.black,
                 size: 50.0,
               ),
             ),
@@ -319,50 +336,32 @@ class _PlayerPageState extends State<_PlayerPage>
   }
 
   Widget volumnController() {
-    return Stack(
-      alignment: Alignment.centerLeft,
+    return Row(
       children: <Widget>[
         const Icon(
           Icons.volume_mute,
-          color: Colors.black,
           size: 15,
         ),
-        Positioned(
-          left: 15.0,
-          right: 15.0,
-          child: Slider(
-            onChanged: (val) async {
-              await authProvider!.audioPlayer.setVolume(_volumeValue);
-
-              setState(() {
-                _volumeValue = val;
-              });
-            },
-            value: _volumeValue,
-            max: 100.0,
-            min: 0.0,
-            activeColor: Colors.black,
-            divisions: 2,
-            inactiveColor: Colors.black38,
-            onChangeStart: (val) {
-              setState(() {
-                _volumeValue = val;
-              });
-            },
-            onChangeEnd: (val) {
-              setState(() {
-                _volumeValue = val;
-              });
-            },
-          ),
+        Expanded(
+          child: StreamBuilder<double>(
+              stream: authProvider!.audioPlayer.volumnStream(),
+              builder: (context, snapshot) {
+            
+                return Slider(
+                  onChanged: (val) async {
+                    await authProvider!.audioPlayer.setVolume(val);
+                  },
+                  value: snapshot.data ?? 0.0,
+                  max: 100.0,
+                  min: 0.0,
+                  activeColor: Colors.black,
+                  inactiveColor: Colors.black38,
+                );
+              }),
         ),
-        const Align(
-          alignment: Alignment.centerRight,
-          child: Icon(
-            Icons.volume_up,
-            color: Colors.black,
-            size: 15,
-          ),
+        const Icon(
+          Icons.volume_up,
+          size: 15,
         ),
       ],
     );
@@ -377,7 +376,6 @@ class _PlayerPageState extends State<_PlayerPage>
             onPressed: () {},
             icon: const Icon(
               MaterialIcons.favorite_border,
-              color: Colors.black,
               size: 20.0,
             )),
         IconButton(
@@ -391,11 +389,10 @@ class _PlayerPageState extends State<_PlayerPage>
             )),
         IconButton(
           onPressed: () async {
-            await authProvider!.audioPlayer.shuffle();
+            await authProvider!.audioPlayer.shuffle;
           },
           icon: const Icon(
             SimpleLineIcons.shuffle,
-            color: Colors.black,
             size: 20.0,
           ),
         ),
@@ -403,7 +400,6 @@ class _PlayerPageState extends State<_PlayerPage>
           onPressed: () async {},
           icon: const Icon(
             Feather.more_horizontal,
-            color: Colors.black,
             size: 20.0,
           ),
         )

@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:muezikfy/models/person.dart';
 import 'package:muezikfy/models/song.dart';
+import 'package:muezikfy/services/my_audio_player.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -88,7 +89,7 @@ class AuthProvider with ChangeNotifier {
 
   String? get currentPhoneNumber => _firebaseAuth.currentUser?.phoneNumber;
 
-  AudioPlayer get audioPlayer => AudioPlayer();
+  MyAudioPlayer get audioPlayer => MyAudioPlayer();
 
   OnAudioQuery get audioQuery => OnAudioQuery();
 
