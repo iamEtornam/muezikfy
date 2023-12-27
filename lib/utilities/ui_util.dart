@@ -1,11 +1,10 @@
-
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 
 alertNotification(
     {required String message,
-      required BuildContext context,
-      int duration = 3}) {
+    required BuildContext context,
+    int duration = 3}) {
   return BotToast.showSimpleNotification(
       duration: Duration(seconds: duration),
       title: message,
@@ -14,18 +13,18 @@ alertNotification(
       align: Alignment.topCenter);
 }
 
- String parseToMinutesSeconds(int ms) {
-String data;
-Duration duration = Duration(milliseconds: ms);
+String parseToMinutesSeconds(int ms) {
+  String data;
+  Duration duration = Duration(milliseconds: ms);
 
-int minutes = duration.inMinutes;
-int seconds = (duration.inSeconds) - (minutes * 60);
+  int minutes = duration.inMinutes;
+  int seconds = (duration.inSeconds) - (minutes * 60);
 
-data = "$minutes:";
-if (seconds <= 9) data += "0";
+  data = "$minutes:";
+  if (seconds <= 9) data += "0";
 
-data += seconds.round().toString();
-return data;
+  data += seconds.round().toString();
+  return data;
 }
 
 double calculateScaleValue(
@@ -43,3 +42,6 @@ double calculateScaleValue(
 
   return scaledValue;
 }
+
+const defaultArtWork =
+    'https://firebasestorage.googleapis.com/v0/b/freemindsgh.appspot.com/o/appstore.png?alt=media&token=ca94180a-56a3-410e-a7ab-335a6ee8ab8f';
