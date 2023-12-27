@@ -330,24 +330,33 @@ class _HomeViewState extends State<HomeView> {
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               final song = songs[index];
-                              return SongListTile(
-                                songTitle: song.title ?? 'unknown',
-                                songDuration: duration == null
-                                    ? parseToMinutesSeconds(song.duration ?? 0)
-                                    : parseToMinutesSeconds(
-                                        duration?.inMilliseconds ?? 0),
-                                songCover: song.iId!,
-                                songArtise: song.artist ?? 'unknown',
-                                isSelected: _isThisCitizenSelected(index),
-                                isPlaying: authProvider!.audioPlayer.playing,
-                                onTap: () async {
-                                  _tapped(index);
-                                  playSong(songPath: song.sData!);
-                                  setState(() {
-                                    selectedSong = song;
+                              return StreamBuilder<Duration>(
+                                  stream:
+                                      authProvider!.audioPlayer.positionStream,
+                                  builder: (context, snapshot) {
+                                    return SongListTile(
+                                      songTitle: song.title ?? 'unknown',
+                                      songDuration: duration == null &&
+                                              selectedSong?.iId != song.iId
+                                          ? parseToMinutesSeconds(
+                                              song.duration ?? 0)
+                                          : parseToMinutesSeconds(
+                                              snapshot.data?.inMilliseconds ??
+                                                  0),
+                                      songCover: song.iId!,
+                                      songArtise: song.artist ?? 'unknown',
+                                      isSelected: _isThisCitizenSelected(index),
+                                      isPlaying:
+                                          authProvider!.audioPlayer.playing,
+                                      onTap: () async {
+                                        _tapped(index);
+                                        playSong(songPath: song.sData!);
+                                        setState(() {
+                                          selectedSong = song;
+                                        });
+                                      },
+                                    );
                                   });
-                                },
-                              );
                             },
                             separatorBuilder: (_, __) => const SizedBox(
                                   height: 10,
@@ -448,7 +457,13 @@ class _HomeViewState extends State<HomeView> {
                                 IconButton(
                                     icon:
                                         const Icon(Icons.skip_previous_rounded),
-                                    onPressed: () {}),
+                                    onPressed: () async {
+                                      if (authProvider!
+                                          .audioPlayer.hasPrevious) {
+                                        await authProvider!.audioPlayer
+                                            .seekToPrevious();
+                                      }
+                                    }),
                                 GestureDetector(
                                   onTap: () {
                                     playSong(songPath: selectedSong!.sData!);
@@ -480,7 +495,12 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                                 IconButton(
                                     icon: const Icon(Icons.skip_next),
-                                    onPressed: () {}),
+                                    onPressed: () async {
+                                      if (authProvider!.audioPlayer.hasNext) {
+                                        await authProvider!.audioPlayer
+                                            .seekToNext();
+                                      }
+                                    }),
                               ],
                             )
                           ],
