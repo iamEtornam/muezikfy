@@ -2,17 +2,19 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
+import 'package:muezikfy/routes.dart';
 import 'package:muezikfy/utilities/ui_util.dart';
 import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
-  LoginView({Key key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
-  _LoginViewState createState() => _LoginViewState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
 class _LoginViewState extends State<LoginView> {
@@ -32,15 +34,21 @@ class _LoginViewState extends State<LoginView> {
                     'MUEZIKFY',
                     style: Theme.of(context)
                         .textTheme
-                        .headline5
+                        .headlineSmall!
                         .copyWith(fontWeight: FontWeight.bold),
                   ),
-                  Spacer(),
-                  FlutterLogo(size: 120,),
-                      Spacer(),
-                  FlatButton(
-                    color: Colors.white,
-                    padding: EdgeInsets.all(15),
+                  const Spacer(),
+                  const FlutterLogo(
+                    size: 120,
+                  ),
+                  const Spacer(),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      padding: const EdgeInsets.all(15),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(45)),
+                    ),
                     onPressed: () async {
                       BotToast.showLoading(
                           allowClick: false,
@@ -49,13 +57,13 @@ class _LoginViewState extends State<LoginView> {
                       bool isSuccessful =
                           await authenticationProvider.signInWithGoogle();
                       BotToast.closeAllLoading();
+                      if (!mounted) return;
                       if (isSuccessful) {
                         alertNotification(
                             message: 'Welcome to Muezikfy...',
                             context: context);
-                        Future.delayed(Duration(seconds: 5), () {
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/homeView', (route) => false);
+                        Future.delayed(const Duration(seconds: 3), () {
+                          context.goNamed(RoutesName.home);
                         });
                       } else {
                         alertNotification(
@@ -72,119 +80,72 @@ class _LoginViewState extends State<LoginView> {
                           width: 35,
                           height: 35,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
                           'Continue with Google',
-                          style: Theme.of(context).textTheme.button,
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
                       ],
                     ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(45)),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-                  FlatButton(
-                      color: Color(0xFF3b5998),
-                      padding: EdgeInsets.all(15),
-                      onPressed: () async {
-                        BotToast.showLoading(
-                            allowClick: false,
-                            clickClose: false,
-                            backButtonBehavior: BackButtonBehavior.ignore);
-                        bool isSuccessful =
-                            await authenticationProvider.signInWithFacebook();
-                        BotToast.closeAllLoading();
-                        if (isSuccessful) {
-                          alertNotification(
-                              message: 'Welcome to Muezikfy...',
-                              context: context);
-                          Future.delayed(Duration(seconds: 5), () {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/homeView', (route) => false);
-                          });
-                        } else {
-                          alertNotification(
-                              message: 'Authentication failed!',
-                              context: context);
-                        }
-                      },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            AntDesign.facebook_square,
-                            color: Colors.white,
+                  Platform.isIOS
+                      ? TextButton(
+                          style: TextButton.styleFrom(
+                              backgroundColor: const Color(0xFF000000),
+                              padding: const EdgeInsets.all(15),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(45))),
+                          onPressed: () async {
+                            BotToast.showLoading(
+                                allowClick: false,
+                                clickClose: false,
+                                backButtonBehavior: BackButtonBehavior.ignore);
+                            bool isSuccessful =
+                                await authenticationProvider.signInWithApple();
+                            BotToast.closeAllLoading();
+                            if (!mounted) return;
+
+                            if (isSuccessful) {
+                              alertNotification(
+                                  message: 'Welcome to Muezikfy...',
+                                  context: context);
+                              Future.delayed(const Duration(seconds: 3), () {
+                                context.goNamed(RoutesName.home);
+                              });
+                            } else {
+                              alertNotification(
+                                  message: 'Authentication failed!',
+                                  context: context);
+                            }
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                AntDesign.apple1,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Sign in with Apple',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge!
+                                    .copyWith(color: Colors.white),
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            'Continue with Facebook',
-                            style: Theme.of(context)
-                                .textTheme
-                                .button
-                                .copyWith(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(45))),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Platform.isIOS?  FlatButton(
-                      color: Color(0xFF000000),
-                      padding: EdgeInsets.all(15),
-                      onPressed: () async {
-                        BotToast.showLoading(
-                            allowClick: false,
-                            clickClose: false,
-                            backButtonBehavior: BackButtonBehavior.ignore);
-                        bool isSuccessful =
-                            await authenticationProvider.signInWithApple();
-                        BotToast.closeAllLoading();
-                        if (isSuccessful) {
-                          alertNotification(
-                              message: 'Welcome to Muezikfy...',
-                              context: context);
-                          Future.delayed(Duration(seconds: 5), () {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/homeView', (route) => false);
-                          });
-                        } else {
-                          alertNotification(
-                              message: 'Authentication failed!',
-                              context: context);
-                        }
-                      },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            AntDesign.apple1,
-                            color: Colors.white,
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            'Sign in with Apple',
-                            style: Theme.of(context)
-                                .textTheme
-                                .button
-                                .copyWith(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(45))) : SizedBox(),
-                  SizedBox(
+                        )
+                      : const SizedBox(),
+                  const SizedBox(
                     height: 25,
                   ),
                 ],

@@ -1,63 +1,29 @@
-import 'package:apple_sign_in/apple_sign_in.dart';
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:muezikfy/models/person.dart';
+import 'package:muezikfy/models/song.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FacebookLogin _facebookLogin = FacebookLogin();
-  Future<bool> get appleSignInAvailable => AppleSignIn.isAvailable();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
   Future<bool> signInWithApple() async {
     bool isSuccessful = false;
 
     try {
-      if (await appleSignInAvailable) {
-        final AuthorizationResult appleResult =
-            await AppleSignIn.performRequests([
-          AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-        ]);
-
-        if (appleResult.error != null) {
-          isSuccessful = false;
-        }
-
-        final AuthorizationResult result = await AppleSignIn.performRequests([
-          AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
-        ]);
-
-        switch (result.status) {
-          case AuthorizationStatus.authorized:
-            final appleIdCredential = result.credential;
-            final oAuthProvider = OAuthProvider('apple.com');
-            final credential = oAuthProvider.credential(
-              idToken: String.fromCharCodes(appleIdCredential.identityToken),
-              accessToken:
-                  String.fromCharCodes(appleIdCredential.authorizationCode),
-            );
-            final authResult =
-                await _firebaseAuth.signInWithCredential(credential);
-            final firebaseUser = authResult.user;
-            if (firebaseUser != null) {
-              isSuccessful = true;
-            } else {
-              isSuccessful = false;
-            }
-            break;
-          case AuthorizationStatus.cancelled:
-            isSuccessful = false;
-            break;
-          case AuthorizationStatus.error:
-            print(result.error.localizedDescription);
-            isSuccessful = false;
-            break;
-        }
-      } else {
-        isSuccessful = false;
-      }
+      final authResult =
+          await _firebaseAuth.signInWithProvider(AppleAuthProvider());
+      final firebaseUser = authResult.user;
+      isSuccessful = firebaseUser != null;
     } catch (e) {
-      print(e);
       isSuccessful = false;
     }
     return isSuccessful;
@@ -66,68 +32,155 @@ class AuthProvider with ChangeNotifier {
   Future<bool> signInWithGoogle() async {
     bool isSuccessful = false;
     try {
-      UserCredential userCredential;
-      final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final GoogleAuthCredential googleAuthCredential =
-          GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
       );
-      userCredential =
-          await _firebaseAuth.signInWithCredential(googleAuthCredential);
+
+      // Once signed in, return the UserCredential
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
       final user = userCredential.user;
-      if (user != null) {
-        isSuccessful = true;
-      } else {
-        isSuccessful = false;
-      }
+      final displayName = googleUser?.displayName?.split(' ');
+      final photoUrl = googleUser?.photoUrl;
+      final email = googleUser?.email;
+
+      await updateUser(Person(
+        firstName: displayName![0],
+        lastName: displayName[displayName.length - 1],
+        photoUrl: photoUrl ?? '',
+        email: email!,
+        createdAt: DateTime.now().toString(),
+        userId: user!.uid,
+        discoverable: true,
+      ));
+
+      isSuccessful = true;
     } catch (e) {
-      print(e);
       isSuccessful = false;
     }
     return isSuccessful;
   }
 
-  Future<bool> signInWithFacebook() async {
-    bool isSuccessful = false;
-    AuthCredential credential;
+  Future<void> signOut() async {
+    await _firebaseAuth.signOut();
+  }
 
-    try {
-      final res = await _facebookLogin.logIn(permissions: [
-        FacebookPermission.publicProfile,
-        FacebookPermission.email
-      ]);
+  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
-      switch (res.status) {
-        case FacebookLoginStatus.Success:
-          final FacebookAccessToken accessToken = res.accessToken;
-          credential = FacebookAuthProvider.credential(
-            accessToken.token,
-          );
-          final User user =
-              (await _firebaseAuth.signInWithCredential(credential)).user;
+  User? get currentUser => _firebaseAuth.currentUser;
 
-          if (user != null) {
-            isSuccessful = true;
-          } else {
-            isSuccessful = false;
-          }
+  String? get currentUserId => _firebaseAuth.currentUser?.uid;
 
-          break;
-        case FacebookLoginStatus.Cancel:
-          isSuccessful = false;
-          break;
-        case FacebookLoginStatus.Error:
-          isSuccessful = false;
-          break;
-      }
-    } catch (e) {
-      print(e);
-      isSuccessful = false;
+  String? get currentEmail => _firebaseAuth.currentUser?.email;
+
+  String? get currentDisplayName => _firebaseAuth.currentUser?.displayName;
+
+  String? get currentPhotoUrl => _firebaseAuth.currentUser?.photoURL;
+
+  String? get currentPhoneNumber => _firebaseAuth.currentUser?.phoneNumber;
+
+  AudioPlayer get audioPlayer => AudioPlayer();
+
+  OnAudioQuery get audioQuery => OnAudioQuery();
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> get getFriends =>
+      _firestore.collection('persons').doc(currentUserId).snapshots();
+
+  Query<Map<String, dynamic>> get personsQuery => _firestore
+      .collection('persons')
+      .where('discoverable', isEqualTo: true)
+      .where('user_id', isNotEqualTo: currentUserId!);
+
+  Future<Person?> getUser() async {
+    DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await _firestore.collection('persons').doc(currentUserId).get();
+    if (snapshot.exists) {
+      return Person.fromJson(snapshot.data()!);
+    } else {
+      return null;
     }
-    return isSuccessful;
+  }
+
+  Future<void> updateUser(Person person) async {
+    return _firestore
+        .collection('persons')
+        .doc(currentUserId)
+        .set(person.toJson(), SetOptions(merge: true));
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getFriendProfile(
+      String friendId) {
+    return _firestore.collection('persons').doc(currentUserId).snapshots();
+  }
+
+  Future<String> uploadPhoto(
+      {required Uint8List file, required String path}) async {
+    final storageRef = _firebaseStorage.ref();
+
+    final fileName = path.split('/').last;
+
+    final imageRef = storageRef.child(fileName);
+    await imageRef.putData(file);
+    final downloadUrl = await imageRef.getDownloadURL();
+    return downloadUrl;
+  }
+
+  Future<void> addPersonAsFriend(String friendId) {
+    return _firestore.collection('persons').doc(currentUserId).update({
+      'friends': FieldValue.arrayUnion([friendId])
+    });
+  }
+
+  Future<void> removePersonAsFriend(String friendId) {
+    return _firestore.collection('persons').doc(currentUserId).update({
+      'friends': FieldValue.arrayRemove([friendId])
+    });
+  }
+
+  Future<void> saveNowPlaying(Song song) async {
+    return await _firestore
+        .collection('now_playing')
+        .doc(currentUserId)
+        .set(song.toJson(), SetOptions(merge: true));
+  }
+
+  Future<void> removeNowPlaying(Song song) async {
+    return await _firestore
+        .collection('now_playing')
+        .doc(currentUserId)
+        .delete();
+  }
+
+  Future<Song?> getNowPlaying(String friendId) async {
+    final snapshot =
+        await _firestore.collection('now_playing').doc(friendId).get();
+    if (snapshot.exists) {
+      return Song.fromJson(snapshot.data()!);
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> uploadSong(
+      {required Uint8List file, required String path}) async {
+    final storageRef = _firebaseStorage.ref();
+
+    final fileName = path.split('/').last;
+
+    final imageRef = storageRef.child('songs/$fileName');
+    await imageRef.putData(file);
+    final downloadUrl = await imageRef.getDownloadURL();
+    return await _firestore.collection('now_playing').doc(currentUserId).set({
+      '_uri': downloadUrl,
+    }, SetOptions(merge: true));
   }
 }

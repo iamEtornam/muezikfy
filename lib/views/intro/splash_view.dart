@@ -1,41 +1,40 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_audio_query/flutter_audio_query.dart';
-import 'package:muezikfy/services/songs_persistence_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:muezikfy/routes.dart';
 import 'package:muezikfy/shared_widgets/custom_progress_indicator.dart';
 
 class SplashView extends StatefulWidget {
+  const SplashView({super.key});
+
   @override
-  _SplashViewState createState() => _SplashViewState();
+  State<SplashView> createState() => _SplashViewState();
 }
 
 class _SplashViewState extends State<SplashView> {
-  final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-  final SongsPersistenceService _songsPersistenceService = SongsPersistenceService();
+  late BuildContext buildContext;
 
   @override
   void initState() {
-    loginAuthState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      loginAuthState(buildContext);
+    });
     super.initState();
   }
 
-  Future loginAuthState() async {
-    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-    if (_firebaseAuth?.currentUser != null) {
-      List<SongInfo> songs = await audioQuery.getSongs();
-
-      await _songsPersistenceService.insertSongs(songs: songs);
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/homeView', (route) => false);
+  Future loginAuthState(BuildContext context) async {
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    if (firebaseAuth.currentUser != null) {
+      context.goNamed(RoutesName.home);
     } else {
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/loginView', (route) => false);
+      context.goNamed(RoutesName.login);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    buildContext = context;
+    return const Scaffold(
       body: Column(
         children: [
           Spacer(),

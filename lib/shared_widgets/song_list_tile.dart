@@ -1,32 +1,35 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:muezikfy/utilities/custom_colors.dart';
+import 'package:muezikfy/utilities/color_schemes.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class SongListTile extends StatefulWidget {
-  final String songCover;
+  final int? songCover;
   final String songTitle;
   final String songArtise;
   final String songDuration;
   final Function onTap;
   final bool isSelected;
+  final bool isPlaying;
   const SongListTile({
-    Key key,
-    @required this.isSelected,
-    @required this.onTap,
-    @required this.songCover, this.songTitle, this.songArtise, this.songDuration,
-  }) : super(key: key);
+    super.key,
+    required this.isSelected,
+    required this.isPlaying,
+    required this.onTap,
+    this.songCover,
+    required this.songTitle,
+    required this.songArtise,
+    required this.songDuration,
+  });
 
   @override
-  _SongListTileState createState() => _SongListTileState();
+  State<SongListTile> createState() => _SongListTileState();
 }
 
 class _SongListTileState extends State<SongListTile> {
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext buildContext) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         widget.onTap();
       },
       child: Container(
@@ -35,7 +38,7 @@ class _SongListTileState extends State<SongListTile> {
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: _tileColor())),
+                colors: _tileColor(buildContext))),
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Row(
@@ -47,25 +50,28 @@ class _SongListTileState extends State<SongListTile> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Stack(children: [
-                      widget.songCover == null ? Image.asset(
-                        'assets/pop_smoke_album.png',
-                        width: 60,
-                        height: 60,
-                      ) : Image.file(
-                        File(widget.songCover),
-                        width: 60,
-                        height: 60,
-                      ),
-                      Container(
-                        width: 60,
-                        height: 60,
-                        color: Theme.of(context).scaffoldBackgroundColor.withOpacity(.3),
-                        child: Icon(widget.isSelected ? Icons.pause : Icons.play_arrow,color: colorMain,),
-                      )
-                    ],),
+                    child: Stack(
+                      children: [
+                        QueryArtworkWidget(
+                          id: widget.songCover ?? 0,
+                          type: ArtworkType.AUDIO,
+                          size: 60,
+                        ),
+                        Container(
+                          width: 60,
+                          height: 60,
+                          color: Theme.of(buildContext)
+                              .scaffoldBackgroundColor
+                              .withOpacity(.3),
+                          child: Icon(
+                            widget.isPlaying ? Icons.pause : Icons.play_arrow,
+                            color: colorMain,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   Column(
@@ -73,26 +79,26 @@ class _SongListTileState extends State<SongListTile> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width - 210,
+                        width: MediaQuery.of(buildContext).size.width - 210,
                         child: Text(
                           widget.songTitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
+                          style: Theme.of(buildContext)
                               .textTheme
-                              .bodyText1
+                              .bodyLarge!
                               .copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width - 210,
+                        width: MediaQuery.of(buildContext).size.width - 210,
                         child: Text(
                           widget.songArtise,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
+                          style: Theme.of(buildContext)
                               .textTheme
-                              .subtitle2
+                              .titleSmall!
                               .copyWith(fontWeight: FontWeight.normal),
                         ),
                       ),
@@ -100,14 +106,14 @@ class _SongListTileState extends State<SongListTile> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Text(
                 widget.songDuration,
-                style: Theme.of(context)
+                style: Theme.of(buildContext)
                     .textTheme
-                    .subtitle2
+                    .titleSmall!
                     .copyWith(fontWeight: FontWeight.w600),
               ),
             ],
@@ -117,7 +123,7 @@ class _SongListTileState extends State<SongListTile> {
     );
   }
 
-  List<Color> _tileColor() {
+  List<Color> _tileColor(BuildContext buildContext) {
     if (widget.isSelected) {
       return [
         Colors.orangeAccent.withOpacity(.5),
@@ -128,8 +134,8 @@ class _SongListTileState extends State<SongListTile> {
       ];
     } else {
       return [
-        Theme.of(context).scaffoldBackgroundColor,
-        Theme.of(context).scaffoldBackgroundColor
+        Theme.of(buildContext).scaffoldBackgroundColor,
+        Theme.of(buildContext).scaffoldBackgroundColor
       ];
     }
   }
