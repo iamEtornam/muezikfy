@@ -3,8 +3,8 @@
 A music player 
 <p align="center">
 
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/RegNex/muezikfy/graphs/commit-activity)
-[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://github.com/RegNex/)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/iamEtornam/muezikfy/graphs/commit-activity)
+[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://github.com/iamEtornam/)
 [![ForTheBadge made-with-flutter](https://img.shields.io/badge/flutter-made%20with%20flutter-blue.svg)](https://flutter.dev)
 [![ForTheBadge ios-supported](https://img.shields.io/badge/IOS-IOS%20Supported-lightgrey.svg)](https://flutter.dev)
 [![ForTheBadge ios-android](https://img.shields.io/badge/android-android%20supported-green.svg)](https://flutter.dev)
@@ -18,25 +18,25 @@ This project is an implementation of a music player
 ## Art
 
 <video width="640" height="420" controls>
-  <source src="https://raw.githubusercontent.com/RegNex/muezikfy/master/screenshot/video.mp4" type="video/mp4">
+  <source src="https://raw.githubusercontent.com/iamEtornam/muezikfy/master/screenshot/video.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 <br>
 
 <p>
-<img src="https://raw.githubusercontent.com/RegNex/muezikfy/master/screenshot/art_1.jpg" width="250"  height="540"/>
+<img src="https://raw.githubusercontent.com/iamEtornam/muezikfy/master/screenshot/art_1.jpg" width="250"  height="540"/>
 </p>
 
 <br>
 <p>
-<img src="https://raw.githubusercontent.com/RegNex/muezikfy/master/screenshot/art_2.jpg" width="250"  height="540"/>
+<img src="https://raw.githubusercontent.com/iamEtornam/muezikfy/master/screenshot/art_2.jpg" width="250"  height="540"/>
 </p>
 
 
 
 ## Download
 
-Download application for android [here](https://github.com/RegNex/muezikfy/releases/download/v1.0.0/muezikfy.app.zip)
+Download application for android [here](https://github.com/iamEtornam/muezikfy/releases/download/v1.0.0/muezikfy.app.zip)
 
 To clone this project,
 open your terminal or cmd
@@ -46,7 +46,7 @@ cd folder/to/clone-into/
 ```
 
 ```
-git clone https://github.com/RegNex/muezikfy.git
+git clone https://github.com/iamEtornam/muezikfy.git
 ```
 
 Then
