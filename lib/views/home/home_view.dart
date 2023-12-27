@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,10 +30,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final OnAudioQuery audioQuery = OnAudioQuery();
   final SongsPersistenceService _songsPersistenceService =
       SongsPersistenceService();
-  final AudioPlayer player = AudioPlayer();
   final ScrollController _scrollController = ScrollController();
   UniqueKey _listViewKey = UniqueKey();
   bool isSelected = false;
@@ -64,7 +63,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   fetchSongs() async {
-    List<SongModel> songs = await audioQuery.querySongs();
+    List<SongModel> songs = await authProvider!.audioQuery.querySongs();
     log("querySongs ${songs.length}");
     await _songsPersistenceService.insertSongs(songs: songs);
     setState(() {});
@@ -74,7 +73,6 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     buildContext = context;
     final Size size = MediaQuery.of(context).size;
-    log('player.playing ${player.playing}');
     return authProvider == null
         ? const Scaffold(body: CustomProgressIndicator())
         : Scaffold(
@@ -159,97 +157,112 @@ class _HomeViewState extends State<HomeView> {
             body: RefreshIndicator.adaptive(
               onRefresh: () async {
                 fetchSongs();
+                setState(() {});
               },
               child: ListView(
                 controller: _scrollController,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 16),
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () => context.pushNamed(RoutesName.personList),
-                          borderRadius: BorderRadius.circular(10),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 70,
-                                  height: 70,
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: Colors.grey, width: 2)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: CircleAvatar(
-                                      radius: 33,
-                                      backgroundColor:
-                                          colorMain.withOpacity(.5),
-                                      backgroundImage:
-                                          const ExactAssetImage(Images.avatar),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 6,
-                                ),
-                                SizedBox(
-                                    width: 90,
-                                    child: Text(
-                                      'Add friends',
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall,
-                                    )),
-                              ],
-                            ),
-                          ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          'what are your friends listening to?',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(fontWeight: FontWeight.normal),
                         ),
-                        StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                            stream: authProvider!.getFriends,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const CustomProgressIndicator();
-                              }
-                              if (!snapshot.hasData) {
-                                return const SizedBox.shrink();
-                              }
-                              final friends = snapshot.data?.data()?['friends'];
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                        ),
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: () =>
+                                  context.pushNamed(RoutesName.personList),
+                              borderRadius: BorderRadius.circular(10),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 5),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 70,
+                                      height: 70,
+                                      decoration: BoxDecoration(
+                                          color: Theme.of(context)
+                                              .scaffoldBackgroundColor,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                              color: Colors.grey, width: 2)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: CircleAvatar(
+                                          radius: 33,
+                                          backgroundColor:
+                                              colorMain.withOpacity(.5),
+                                          backgroundImage:
+                                              const ExactAssetImage(
+                                                  Images.avatar),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 6,
+                                    ),
+                                    SizedBox(
+                                        width: 90,
+                                        child: Text(
+                                          'Add friends',
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall,
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              height: 80,
+                              width: 1,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: StreamBuilder<
+                                      DocumentSnapshot<Map<String, dynamic>>>(
+                                  stream: authProvider!.getFriends,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                            ConnectionState.waiting &&
+                                        snapshot.data == null) {
+                                      return const CustomProgressIndicator();
+                                    }
+                                    if (!snapshot.hasData) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    final friends =
+                                        snapshot.data?.data()?['friends'];
 
-                              if (friends == null) {
-                                return const SizedBox.shrink();
-                              }
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24,
-                                    ),
-                                    child: Text(
-                                      'what are your friends listening to?',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall!
-                                          .copyWith(
-                                              fontWeight: FontWeight.normal),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 16,
-                                      top: 6,
-                                    ),
-                                    child: SizedBox(
+                                    if (friends == null) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return SizedBox(
                                       height: 110,
                                       width: size.width,
                                       child: ListView.builder(
@@ -257,18 +270,29 @@ class _HomeViewState extends State<HomeView> {
                                           itemCount: friends.length,
                                           itemBuilder: (context, index) =>
                                               StatusFriendsWidget(
+                                                onTap: () async {
+                                                  final mSong =
+                                                      await authProvider!
+                                                          .getNowPlaying(
+                                                              friends[index]);
+                                                  if (mSong == null) return;
+                                                  if (!mounted) return;
+                                                  context.pushNamed(
+                                                      RoutesName.playing,
+                                                      extra: mSong);
+                                                },
                                                 friendId: friends[index],
                                               )),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                ],
-                              );
-                            }),
-                      ],
-                    ),
+                                    );
+                                  }),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -315,7 +339,7 @@ class _HomeViewState extends State<HomeView> {
                                 songCover: song.iId!,
                                 songArtise: song.artist ?? 'unknown',
                                 isSelected: _isThisCitizenSelected(index),
-                                isPlaying: player.playing,
+                                isPlaying: authProvider!.audioPlayer.playing,
                                 onTap: () async {
                                   _tapped(index);
                                   playSong(songPath: song.sData!);
@@ -336,9 +360,10 @@ class _HomeViewState extends State<HomeView> {
             bottomNavigationBar: selectedSong == null
                 ? const SizedBox()
                 : GestureDetector(
-                    onTap: () => context.pushNamed(RoutesName.playing),
-                    onVerticalDragStart: (details) =>
-                        context.pushNamed(RoutesName.playing),
+                    onTap: () => context.pushNamed(RoutesName.playing,
+                        extra: selectedSong!),
+                    onVerticalDragStart: (details) => context
+                        .pushNamed(RoutesName.playing, extra: selectedSong!),
                     child: Hero(
                       tag: 'to_playing',
                       child: AnimatedContainer(
@@ -424,7 +449,7 @@ class _HomeViewState extends State<HomeView> {
                                     icon:
                                         const Icon(Icons.skip_previous_rounded),
                                     onPressed: () {}),
-                                InkWell(
+                                GestureDetector(
                                   onTap: () {
                                     playSong(songPath: selectedSong!.sData!);
                                     setState(() {});
@@ -446,7 +471,7 @@ class _HomeViewState extends State<HomeView> {
                                               Colors.deepOrange,
                                             ])),
                                     child: Icon(
-                                      player.playing
+                                      authProvider!.audioPlayer.playing
                                           ? Icons.pause
                                           : Icons.play_arrow,
                                       color: Colors.white,
@@ -488,15 +513,19 @@ class _HomeViewState extends State<HomeView> {
   void playSong({required String songPath}) async {
     try {
       log('songPath: $songPath');
-      duration = await player.setFilePath(songPath);
+      duration = await authProvider!.audioPlayer.setFilePath(songPath);
       log('duration: $duration');
 
-      if (player.playing) {
-        player.stop();
+      if (authProvider!.audioPlayer.playing) {
+        authProvider!.audioPlayer.stop();
+        await authProvider!.removeNowPlaying(selectedSong!);
       } else {
-        player.play();
+        authProvider!.audioPlayer.play();
+        await authProvider!.saveNowPlaying(selectedSong!);
+        await authProvider!.uploadSong(
+            file: File(selectedSong!.sData!).readAsBytesSync(), path: songPath);
       }
-      player.playerStateStream.listen((state) {
+      authProvider!.audioPlayer.playerStateStream.listen((state) {
         if (state.processingState == ProcessingState.completed) {
           duration = null;
         }

@@ -5,7 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:muezikfy/models/person.dart';
+import 'package:muezikfy/models/song.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -85,14 +88,17 @@ class AuthProvider with ChangeNotifier {
 
   String? get currentPhoneNumber => _firebaseAuth.currentUser?.phoneNumber;
 
+  AudioPlayer get audioPlayer => AudioPlayer();
+
+  OnAudioQuery get audioQuery => OnAudioQuery();
+
   Stream<DocumentSnapshot<Map<String, dynamic>>> get getFriends =>
       _firestore.collection('persons').doc(currentUserId).snapshots();
 
   Query<Map<String, dynamic>> get personsQuery => _firestore
       .collection('persons')
       .where('discoverable', isEqualTo: true)
-      .where('user_id', isNotEqualTo: currentUserId!)
-      ;
+      .where('user_id', isNotEqualTo: currentUserId!);
 
   Future<Person?> getUser() async {
     DocumentSnapshot<Map<String, dynamic>> snapshot =
@@ -132,5 +138,49 @@ class AuthProvider with ChangeNotifier {
     return _firestore.collection('persons').doc(currentUserId).update({
       'friends': FieldValue.arrayUnion([friendId])
     });
+  }
+
+  Future<void> removePersonAsFriend(String friendId) {
+    return _firestore.collection('persons').doc(currentUserId).update({
+      'friends': FieldValue.arrayRemove([friendId])
+    });
+  }
+
+  Future<void> saveNowPlaying(Song song) async {
+    return await _firestore
+        .collection('now_playing')
+        .doc(currentUserId)
+        .set(song.toJson(), SetOptions(merge: true));
+  }
+
+  Future<void> removeNowPlaying(Song song) async {
+    return await _firestore
+        .collection('now_playing')
+        .doc(currentUserId)
+        .delete();
+  }
+
+  Future<Song?> getNowPlaying(String friendId) async {
+    final snapshot =
+        await _firestore.collection('now_playing').doc(friendId).get();
+    if (snapshot.exists) {
+      return Song.fromJson(snapshot.data()!);
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> uploadSong(
+      {required Uint8List file, required String path}) async {
+    final storageRef = _firebaseStorage.ref();
+
+    final fileName = path.split('/').last;
+
+    final imageRef = storageRef.child('songs/$fileName');
+    await imageRef.putData(file);
+    final downloadUrl = await imageRef.getDownloadURL();
+    return await _firestore.collection('now_playing').doc(currentUserId).set({
+      '_uri': downloadUrl,
+    }, SetOptions(merge: true));
   }
 }

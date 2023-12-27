@@ -3,6 +3,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:muezikfy/models/song.dart';
 import 'package:muezikfy/views/auth/login_view.dart';
 import 'package:muezikfy/views/auth/profile_view.dart';
 import 'package:muezikfy/views/friends/friends_list_view.dart';
@@ -100,9 +101,10 @@ final GoRouter router = GoRouter(
               path: 'playing',
               name: RoutesName.playing,
               pageBuilder: (BuildContext context, GoRouterState state) {
+                final song = state.extra as Song;
                 return CustomTransitionPage(
                   key: state.pageKey,
-                  child: const PlayingView(),
+                  child: PlayingView(song: song),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return FadeTransition(
