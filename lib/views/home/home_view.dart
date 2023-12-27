@@ -20,7 +20,6 @@ import 'package:muezikfy/shared_widgets/status_friends_widget.dart';
 import 'package:muezikfy/utilities/color_schemes.dart';
 import 'package:muezikfy/utilities/ui_util.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -86,7 +85,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    log('isplay ${authProvider!.audioPlayer.isPlaying()}');
+    log('isplay ${authProvider?.audioPlayer.isPlaying()}');
     return authProvider == null
         ? const Scaffold(body: CustomProgressIndicator())
         : ValueListenableBuilder<Song?>(
@@ -606,15 +605,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<bool> requestStoragePermission(BuildContext context) async {
-    final status = await Permission.storage.status;
-    log('status: $status');
-    if (status == PermissionStatus.granted) {
-      return true;
-    }
-    final permission = await Permission.storage.request();
-    if (permission == PermissionStatus.granted) {
-      return true;
-    }
-    return false;
+    return await authProvider!.hasPermission();
   }
 }

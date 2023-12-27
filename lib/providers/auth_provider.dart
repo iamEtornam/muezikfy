@@ -183,4 +183,11 @@ class AuthProvider with ChangeNotifier {
       '_uri': downloadUrl,
     }, SetOptions(merge: true));
   }
+
+  Future<bool> hasPermission() async {
+    final hasPermission = await audioQuery.checkAndRequest(
+      retryRequest: true,
+    );
+    return hasPermission;
+  }
 }

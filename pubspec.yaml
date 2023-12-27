@@ -24,7 +24,6 @@ dependencies:
   sqflite: ^2.3.0
   intl: any
   path: ^1.8.3
-  permission_handler: ^11.0.1
   cloud_firestore: ^4.13.6
   firebase_ui_firestore: ^1.5.15
   go_router: ^13.0.0
