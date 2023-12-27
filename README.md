@@ -17,10 +17,10 @@ This project is an implementation of a music player
 
 ## Art
 
-<video width="640" height="420" controls>
-  <source src="https://raw.githubusercontent.com/iamEtornam/muezikfy/master/screenshot/video.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+
+
+https://github.com/iamEtornam/muezikfy/assets/19475061/33b12d8f-9a32-4e6a-8888-e3d21c4e325b
+
 <br>
 
 <p>
