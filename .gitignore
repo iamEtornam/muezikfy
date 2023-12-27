@@ -40,12 +40,8 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 android/app/google-services.json
-android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
-android/app/src/main/AndroidManifest.xml
 android/app/src/main/res/values/strings.xml
-ios/Runner/Info.plist
-ios/Runner/Info.plist
 ios/firebase_app_id_file.json
 .firebaserc
 lib/firebase_options.dart
