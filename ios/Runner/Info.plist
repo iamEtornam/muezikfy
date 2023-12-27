@@ -36,7 +36,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>Muezikfy needs access to your audio files to play as music.</string>
+	<string>$(PROJECT_NAME) requires access to media library</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PROJECT_NAME) requires access to your Library in order for you to select a Picture.
+    <key>NSMicrophoneUsageDescription</key>
+    <string>.$(PROJECT_NAME) needs access to your microphone</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
