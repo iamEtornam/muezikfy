@@ -8,9 +8,10 @@ import 'package:provider/provider.dart';
 
 class StatusFriendsWidget extends StatelessWidget {
   final String friendId;
+  final VoidCallback onTap;
   const StatusFriendsWidget({
     super.key,
-    required this.friendId,
+    required this.friendId, required this.onTap,
   });
 
   @override
@@ -28,7 +29,7 @@ class StatusFriendsWidget extends StatelessWidget {
           }
           final data = snapshot.data?.data();
           return InkWell(
-            onTap: () {},
+            onTap: onTap,
             borderRadius: BorderRadius.circular(10),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),

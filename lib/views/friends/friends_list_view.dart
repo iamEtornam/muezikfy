@@ -4,6 +4,7 @@ import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
 import 'package:muezikfy/utilities/color_schemes.dart';
+import 'package:muezikfy/utilities/ui_util.dart';
 import 'package:provider/provider.dart';
 
 class FriendsListView extends StatefulWidget {
@@ -86,8 +87,13 @@ class _FriendsListViewState extends State<FriendsListView> {
                         allowClick: false,
                         clickClose: false,
                         backButtonBehavior: BackButtonBehavior.ignore);
-                    await authProvider.addPersonAsFriend(user['uid']);
+                    await authProvider.addPersonAsFriend(user['user_id']);
                     BotToast.closeAllLoading();
+                    if (!mounted) return;
+                    alertNotification(
+                        message:
+                            'Added "${user['first_name']} ${user['last_name']}" as a friend',
+                        context: context);
                   }
                 },
                 borderRadius: BorderRadius.circular(10),
