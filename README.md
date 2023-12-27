@@ -17,12 +17,21 @@ This project is an implementation of a music player
 
 ## Art
 
-
-<img src="https://raw.githubusercontent.com/RegNex/muezikfy/master/screenshot/art_1.jpg" width="50%"  height="50%"/>
-<p>1</p>
+<video width="640" height="420" controls>
+  <source src="https://raw.githubusercontent.com/RegNex/muezikfy/master/screenshot/video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 <br>
-<img src="https://raw.githubusercontent.com/RegNex/muezikfy/master/screenshot/art_2.jpg" width="50%"  height="50%"/>
-<p>2</p>
+
+<p>
+<img src="https://raw.githubusercontent.com/RegNex/muezikfy/master/screenshot/art_1.jpg" width="250"  height="540"/>
+</p>
+
+<br>
+<p>
+<img src="https://raw.githubusercontent.com/RegNex/muezikfy/master/screenshot/art_2.jpg" width="250"  height="540"/>
+</p>
+
 
 
 ## Download
