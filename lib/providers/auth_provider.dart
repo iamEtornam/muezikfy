@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:muezikfy/models/person.dart';
 import 'package:muezikfy/models/song.dart';
 import 'package:muezikfy/services/my_audio_player.dart';
