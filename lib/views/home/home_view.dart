@@ -275,7 +275,7 @@ class _HomeViewState extends State<HomeView> {
                                         }
                                         final friends =
                                             snapshot.data?.data()?['friends'];
-
+                                      
                                         if (friends == null) {
                                           return const SizedBox.shrink();
                                         }

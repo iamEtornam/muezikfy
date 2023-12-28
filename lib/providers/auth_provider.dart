@@ -119,7 +119,7 @@ class AuthProvider with ChangeNotifier {
 
   Stream<DocumentSnapshot<Map<String, dynamic>>> getFriendProfile(
       String friendId) {
-    return _firestore.collection('persons').doc(currentUserId).snapshots();
+    return _firestore.collection('persons').doc(friendId).snapshots();
   }
 
   Future<String> uploadPhoto(
