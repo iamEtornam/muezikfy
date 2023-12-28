@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:muezikfy/models/song.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
@@ -59,6 +60,12 @@ class _SongListTileState extends State<SongListTile> {
                               id: widget.song.iId!,
                               type: ArtworkType.AUDIO,
                               size: 60,
+                              nullArtworkWidget:
+                                  CachedNetworkImage(imageUrl: defaultArtWork),
+                              errorBuilder: (p0, p1, p2) {
+                                return CachedNetworkImage(
+                                    imageUrl: defaultArtWork);
+                              },
                             ),
                           ),
                           Container(

@@ -10,15 +10,15 @@ class MyAudioPlayer {
     _audioPlayer = AudioPlayer();
   }
 
-  isPlaying() => _audioPlayer.playing;
+  bool isPlaying() => _audioPlayer.playing;
 
   int? currentAudioIndex() => _audioPlayer.currentIndex;
 
   currentAudioStream() => _audioPlayer.currentIndexStream;
 
-  isPaused() => _audioPlayer.position != _audioPlayer.duration;
+  bool isPaused() => _audioPlayer.position != _audioPlayer.duration;
 
-  isStopped() => _audioPlayer.position == _audioPlayer.duration;
+  bool isStopped() => _audioPlayer.position == _audioPlayer.duration;
 
   setLoopMode(LoopMode mode) => _audioPlayer.setLoopMode(mode);
 
@@ -47,7 +47,7 @@ class MyAudioPlayer {
 
   get bufferedPosition => _audioPlayer.bufferedPosition;
 
-  get playerStateStream => _audioPlayer.playerStateStream;
+  Stream<PlayerState> get playerStateStream => _audioPlayer.playerStateStream;
 
   get positionStream => _audioPlayer.positionStream;
 

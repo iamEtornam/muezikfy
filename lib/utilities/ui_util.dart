@@ -31,7 +31,7 @@ double calculateScaleValue(
     num originalValue, num originalScaleEnd, num targetScaleEnd) {
   // Ensure originalScaleEnd is not zero to avoid division by zero
   if (originalScaleEnd == 0) {
-    throw ArgumentError("originalScaleEnd cannot be zero.");
+    originalScaleEnd = 100;
   }
 
   // Calculate the proportion factor

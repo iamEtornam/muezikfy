@@ -75,7 +75,7 @@ class _HomeViewState extends State<HomeView> {
             // Metadata to display in the notification:
             album: e.album ?? 'unknown',
             title: e.title,
-            artUri: Uri.parse(e.uri ?? defaultArtWork),
+            artUri: Uri.parse(defaultArtWork),
           ),
         )));
 
@@ -275,7 +275,7 @@ class _HomeViewState extends State<HomeView> {
                                         }
                                         final friends =
                                             snapshot.data?.data()?['friends'];
-                                      
+
                                         if (friends == null) {
                                           return const SizedBox.shrink();
                                         }
@@ -346,19 +346,22 @@ class _HomeViewState extends State<HomeView> {
                                 stream: authProvider!.audioPlayer
                                     .currentAudioStream(),
                                 builder: (context, snapshot) {
-                                  if (authProvider!.audioPlayer.isPlaying()) {
-                                    _currentIndex = snapshot.data!;
+                                  () {
+                                    if (authProvider!.audioPlayer.isPlaying()) {
+                                      _currentIndex = snapshot.data!;
 
-                                    authProvider!.saveNowPlaying(selectedSong!);
-                                    authProvider!.uploadSong(
-                                        file: File(selectedSong.sData!)
-                                            .readAsBytesSync(),
-                                        path: selectedSong.sData!);
-                                  }
-                                  if (snapshot.data != null) {
-                                    selectedSongListner.value =
-                                        songs[snapshot.data!];
-                                  }
+                                      authProvider!
+                                          .saveNowPlaying(selectedSong!);
+                                      authProvider!.uploadSong(
+                                          file: File(selectedSong.sData!)
+                                              .readAsBytesSync(),
+                                          path: selectedSong.sData!);
+                                    }
+                                    if (snapshot.data != null) {
+                                      selectedSongListner.value =
+                                          songs[snapshot.data!];
+                                    }
+                                  };
                                   return ListView.separated(
                                       key: _listViewKey,
                                       controller: _scrollController,

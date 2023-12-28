@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:marquee/marquee.dart';
 import 'package:muezikfy/models/song.dart';
 import 'package:muezikfy/providers/auth_provider.dart';
 import 'package:muezikfy/utilities/color_schemes.dart';
@@ -57,12 +56,12 @@ class _PlayerPageState extends State<_PlayerPage>
     with SingleTickerProviderStateMixin {
   AuthProvider? authProvider;
   late AnimationController _animationController;
-
+  List<AudioSource> audioSource = [];
   AnimatedIconData _animatedIcon = AnimatedIcons.pause_play;
   Duration? duration;
 
   void iconState() {
-    if (authProvider!.audioPlayer.isPlaying()) {
+    if (!authProvider!.audioPlayer.isPlaying()) {
       _animationController.forward();
       setState(() {
         _animatedIcon = AnimatedIcons.pause_play;
@@ -96,7 +95,7 @@ class _PlayerPageState extends State<_PlayerPage>
           // Metadata to display in the notification:
           album: widget.song.album ?? 'unknown',
           title: widget.song.title ?? 'unknown',
-          artUri: Uri.parse(widget.song.sUri ?? defaultArtWork),
+          artUri: Uri.parse(defaultArtWork),
         ),
       ));
 
@@ -148,6 +147,11 @@ class _PlayerPageState extends State<_PlayerPage>
     }
   }
 
+  void stop() {
+    authProvider!.audioPlayer.stopAudio();
+    setState(() {});
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -156,39 +160,53 @@ class _PlayerPageState extends State<_PlayerPage>
 
   @override
   Widget build(BuildContext context) {
+    final size = (MediaQuery.of(context).size.width / 1.5) - 100;
+
     return SafeArea(
       child: Scaffold(
-        body: SizedBox(
-          height: MediaQuery.of(context).size.height / 2,
-          child: Center(
-            child: QueryArtworkWidget(
-              id: widget.song.iId!,
-              type: ArtworkType.AUDIO,
-              quality: 100,
-              artworkQuality: FilterQuality.high,
-              artworkFit: BoxFit.cover,
-              artworkHeight: MediaQuery.of(context).size.height / 2,
-              artworkWidth: MediaQuery.of(context).size.width,
-              size: MediaQuery.of(context).size.height ~/ 2,
-              errorBuilder: (p0, p1, p2) {
-                return CachedNetworkImage(imageUrl: defaultArtWork);
-              },
+        body: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(45.0),
+                child: ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(90)),
+                  child: Center(
+                    child: QueryArtworkWidget(
+                      id: widget.song.iId!,
+                      type: ArtworkType.AUDIO,
+                      quality: 100,
+                      artworkQuality: FilterQuality.high,
+                      artworkFit: BoxFit.cover,
+                      artworkHeight: size,
+                      artworkWidth: size,
+                      nullArtworkWidget:
+                          CachedNetworkImage(imageUrl: defaultArtWork),
+                      errorBuilder: (p0, p1, p2) {
+                        return CachedNetworkImage(imageUrl: defaultArtWork);
+                      },
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-        bottomNavigationBar: Container(
-          padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-          height: MediaQuery.of(context).size.height / 2,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              musicSeeker(),
-              trackDetails(),
-              trackControllers(),
-              volumnController(),
-              additionalOptions()
-            ],
-          ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  musicSeeker(),
+                  const SizedBox(height: 15),
+                  trackDetails(),
+                  const SizedBox(height: 15),
+                  trackControllers(),
+                  volumnController(),
+                  const SizedBox(height: 15),
+                  additionalOptions()
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -208,14 +226,12 @@ class _PlayerPageState extends State<_PlayerPage>
                 onChanged: (val) async {
                   await authProvider!.audioPlayer
                       .seekAudio(Duration(milliseconds: val.toInt()));
-
-               
                 },
                 value: double.parse(currentPosition.toStringAsFixed(1)),
                 max: 100.0,
                 min: 0.0,
                 activeColor: colorMain,
-                inactiveColor: Colors.black38,
+                inactiveColor: Colors.grey,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -229,7 +245,7 @@ class _PlayerPageState extends State<_PlayerPage>
                               parseToMinutesSeconds(
                                   snapshot.data?.inMilliseconds ?? 0),
                               style: const TextStyle(
-                                  fontSize: 12.0, color: Colors.black26)),
+                                  fontSize: 12.0, color: Colors.grey)),
                         );
                       }),
                   StreamBuilder<Duration?>(
@@ -238,9 +254,10 @@ class _PlayerPageState extends State<_PlayerPage>
                         return Padding(
                           padding: const EdgeInsets.only(right: 10.0),
                           child: Text(
-                              '-${parseToMinutesSeconds(snapshot.data?.inMilliseconds ?? 0)}',
+                              parseToMinutesSeconds(
+                                  snapshot.data?.inMilliseconds ?? 0),
                               style: const TextStyle(
-                                  fontSize: 12.0, color: Colors.black26)),
+                                  fontSize: 12.0, color: Colors.grey)),
                         );
                       })
                 ],
@@ -253,27 +270,15 @@ class _PlayerPageState extends State<_PlayerPage>
   Widget trackDetails() {
     return Column(
       children: <Widget>[
-        SizedBox(
-          height: 25,
-          width: MediaQuery.sizeOf(context).width,
-          child: Marquee(
-            text: widget.song.title ?? 'Unknown',
-            scrollAxis: Axis.horizontal,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            blankSpace: 100.0,
-            velocity: 100.0,
-            pauseAfterRound: const Duration(seconds: 0),
-            accelerationDuration: const Duration(seconds: 2),
-            accelerationCurve: Curves.linear,
-            decelerationDuration: const Duration(milliseconds: 500),
-            decelerationCurve: Curves.easeOut,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-          ),
+        Text(
+          widget.song.title ?? 'Unknown',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
         ),
         Text(
           '${widget.song.artist}',
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16.0, color: Colors.black38),
+          style: const TextStyle(fontSize: 16.0, color: Colors.grey),
         )
       ],
     );
@@ -306,16 +311,21 @@ class _PlayerPageState extends State<_PlayerPage>
                 onPressed: () {
                   playSong();
                 },
-                icon: authProvider!.audioPlayer.isStopped()
-                    ? const Icon(
-                        Icons.stop,
-                        size: 60.0,
-                      )
-                    : AnimatedIcon(
-                        progress: _animationController,
-                        icon: _animatedIcon,
-                        size: 60.0,
-                      ),
+                icon: AnimatedIcon(
+                  progress: _animationController,
+                  icon: _animatedIcon,
+                  size: 60.0,
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 15.0,
+            ),
+            IconButton(
+              onPressed: stop,
+              icon: const Icon(
+                Icons.stop,
+                size: 50.0,
               ),
             ),
             const SizedBox(
@@ -336,34 +346,36 @@ class _PlayerPageState extends State<_PlayerPage>
   }
 
   Widget volumnController() {
-    return Row(
-      children: <Widget>[
-        const Icon(
-          Icons.volume_mute,
-          size: 15,
-        ),
-        Expanded(
-          child: StreamBuilder<double>(
-              stream: authProvider!.audioPlayer.volumnStream(),
-              builder: (context, snapshot) {
-            
-                return Slider(
-                  onChanged: (val) async {
-                    await authProvider!.audioPlayer.setVolume(val);
-                  },
-                  value: snapshot.data ?? 0.0,
-                  max: 100.0,
-                  min: 0.0,
-                  activeColor: Colors.black,
-                  inactiveColor: Colors.black38,
-                );
-              }),
-        ),
-        const Icon(
-          Icons.volume_up,
-          size: 15,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: <Widget>[
+          const Icon(
+            Icons.volume_mute,
+            size: 15,
+          ),
+          Expanded(
+            child: StreamBuilder<double>(
+                stream: authProvider!.audioPlayer.volumnStream(),
+                builder: (context, snapshot) {
+                  return Slider(
+                    onChanged: (val) async {
+                      await authProvider!.audioPlayer.setVolume(val);
+                    },
+                    value: snapshot.data ?? 50.0,
+                    max: 100.0,
+                    min: 0.0,
+                    activeColor: colorMain,
+                    inactiveColor: Colors.grey,
+                  );
+                }),
+          ),
+          const Icon(
+            Icons.volume_up,
+            size: 15,
+          ),
+        ],
+      ),
     );
   }
 
@@ -384,7 +396,6 @@ class _PlayerPageState extends State<_PlayerPage>
             },
             icon: const Icon(
               Feather.repeat,
-              color: Colors.black,
               size: 20.0,
             )),
         IconButton(

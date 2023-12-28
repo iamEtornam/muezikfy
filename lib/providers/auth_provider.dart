@@ -174,7 +174,7 @@ class AuthProvider with ChangeNotifier {
       {required Uint8List file, required String path}) async {
     final storageRef = _firebaseStorage.ref();
 
-    final fileName = path.split('/').last;
+    final fileName = (path.split('/').last).split('?').first;
 
     final imageRef = storageRef.child('songs/$fileName');
     await imageRef.putData(file);
