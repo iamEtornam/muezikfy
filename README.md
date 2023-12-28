@@ -17,9 +17,8 @@ This project is an implementation of a music player
 
 ## Art
 
+### [Watch Demo here](https://raw.githubusercontent.com/iamEtornam/muezikfy/master/screenshot/video.mp4)
 
-
-https://github.com/iamEtornam/muezikfy/assets/19475061/33b12d8f-9a32-4e6a-8888-e3d21c4e325b
 
 <br>
 
