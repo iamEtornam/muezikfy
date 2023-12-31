@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -56,13 +57,12 @@ class _HomeViewState extends State<HomeView> {
       final storagePermission = await requestStoragePermission(context);
 
       if (storagePermission) {
-        fetchSongs();
+        Isolate.run(() => fetchSongs());
       }
-      fetchSongs();
     });
   }
 
-  fetchSongs() async {
+  void fetchSongs() async {
     List<SongModel> songs = await authProvider!.audioQuery.querySongs();
     log("querySongs ${songs.length}");
     await _songsPersistenceService.insertSongs(songs: songs);
